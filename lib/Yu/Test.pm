@@ -322,3 +322,5 @@ our sub EXPORT(*@things) {
     }
     return %exports;
 }
+
+# vim: ft=perl6

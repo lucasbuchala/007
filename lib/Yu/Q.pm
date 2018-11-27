@@ -727,3 +727,5 @@ class Q::Expr::BlockAdapter does Q::Expr {
         return $result;
     }
 }
+
+# vim: ft=perl6

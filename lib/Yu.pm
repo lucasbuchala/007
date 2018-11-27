@@ -21,3 +21,5 @@ class Yu {
         Yu::Linter.new(:$parser);
     }
 }
+
+# vim: ft=perl6

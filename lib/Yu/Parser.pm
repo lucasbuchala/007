@@ -27,3 +27,5 @@ class Yu::Parser {
         return $/.ast;
     }
 }
+
+# vim: ft=perl6

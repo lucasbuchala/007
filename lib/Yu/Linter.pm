@@ -175,3 +175,5 @@ class Yu::Linter {
         return @complaints;
     }
 }
+
+# vim: ft=perl6

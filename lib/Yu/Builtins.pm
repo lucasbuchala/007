@@ -366,3 +366,5 @@ sub builtins-pad() is export {
 sub opscope() is export {
     return $opscope;
 }
+
+# vim: ft=perl6

@@ -8,3 +8,5 @@ multi MAIN($path, Bool :$lint!) {
         say "line N, column N: $complaint.message()";
     }
 }
+
+# vim: ft=perl6

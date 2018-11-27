@@ -319,3 +319,5 @@ class Helper {
         }
     }
 }
+
+# vim: ft=perl6

@@ -40,3 +40,5 @@ multi MAIN($path, Str :$backend = "default") {
 multi MAIN(Str :e($program)!, Str :$backend = "default") {
     run_007($program, $backend);
 }
+
+# vim: ft=perl6

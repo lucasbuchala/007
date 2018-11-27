@@ -136,3 +136,5 @@ class Yu::OpScope {
         return $opl;
     }
 }
+
+# vim: ft=perl6

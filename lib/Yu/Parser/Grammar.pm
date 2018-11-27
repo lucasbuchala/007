@@ -361,3 +361,5 @@ grammar Yu::Parser::Grammar {
         [ \s+ | '#' \N* ]*
     }
 }
+
+# vim: ft=perl6

@@ -925,3 +925,5 @@ sub check(Q $ast, $runtime) is export {
         handle($prefix.operand);
     }
 }
+
+# vim: ft=perl6

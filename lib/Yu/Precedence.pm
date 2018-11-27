@@ -10,3 +10,5 @@ class Yu::Precedence {
         self.new(:$.assoc, :%.ops);
     }
 }
+
+# vim: ft=perl6

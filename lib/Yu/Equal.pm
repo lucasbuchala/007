@@ -49,3 +49,5 @@ multi equal-value(Q $l, Q $r) {
     [&&] $l.WHAT === $r.WHAT,
         |$l.attributes.map(&same-avalue);
 }
+
+# vim: ft=perl6

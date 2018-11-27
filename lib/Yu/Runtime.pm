@@ -678,3 +678,5 @@ class Yu::Runtime {
         }
     }
 }
+
+# vim: ft=perl6

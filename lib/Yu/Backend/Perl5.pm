@@ -70,3 +70,5 @@ class Yu::Backend::Perl5 {
         }
     }
 }
+
+# vim: ft=perl6
