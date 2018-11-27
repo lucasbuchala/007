@@ -9,11 +9,11 @@ my class StrOutput {
 }
 
 sub run_007_on_007($program) {
-    my $compunit = _007.parser.parse($program);
+    my $compunit = Yu.parser.parse($program);
     my $runtime-program = slurp("self-host/runtime.007");
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $ast = _007.parser(:$runtime).parse($runtime-program);
+    my $runtime = Yu.runtime(:$output);
+    my $ast = Yu.parser(:$runtime).parse($runtime-program);
     $ast.block.static-lexpad.properties<ast> = $compunit;
     $runtime.run($ast);
     return $output.result;

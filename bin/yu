@@ -26,9 +26,9 @@ sub run_007($program, Str $backend is copy) {
     $backend = %BACKENDS{$backend}.deref
         while %BACKENDS{$backend} ~~ Ref;
 
-    my $runtime = _007.runtime;
+    my $runtime = Yu.runtime;
     my $unexpanded = $backend eq "unexpanded-ast";
-    my $ast = _007.parser(:$runtime).parse($program, :$unexpanded);
+    my $ast = Yu.parser(:$runtime).parse($program, :$unexpanded);
     %BACKENDS{$backend}($ast, $runtime);
     exit($runtime.exit-code);
 }

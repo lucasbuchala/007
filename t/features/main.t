@@ -35,8 +35,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = _007.runtime(:$output, :arguments("James", "Bond"));
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output, :arguments("James", "Bond"));
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -56,8 +56,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = _007.runtime(:$output, :arguments(["one", "two"]));
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output, :arguments(["one", "two"]));
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -78,8 +78,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = _007.runtime(:$output, :arguments(["один"]));
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output, :arguments(["один"]));
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 

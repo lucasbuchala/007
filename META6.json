@@ -7,7 +7,7 @@
     "depends"   : [],
     "license"   : "Artistic-2.0",
     "provides" : {
-        "_007" : "lib/_007.pm6",
+        "_007" : "lib/Yu.pm6",
         "Yu::Backend::JavaScript" : "lib/_007/Backend/JavaScript.pm6",
         "Yu::Equal" : "lib/_007/Equal.pm6",
         "Yu::Linter" : "lib/_007/Linter.pm6",

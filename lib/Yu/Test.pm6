@@ -29,8 +29,8 @@ sub empty-diff($text1 is copy, $text2 is copy, $desc) {
 
 sub parse-error($program, $expected-error, $desc = $expected-error.^name) is export {
     my $output = UnwantedOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output);
+    my $parser = Yu.parser(:$runtime);
     $parser.parse($program);
 
     CATCH {
@@ -47,8 +47,8 @@ sub parse-error($program, $expected-error, $desc = $expected-error.^name) is exp
 
 sub runtime-error($program, $expected-error, $desc = $expected-error.^name) is export {
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output);
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     {
         $runtime.run($ast);
@@ -81,8 +81,8 @@ sub outputs($program, $expected, $desc = "MISSING TEST DESCRIPTION", :@indata = 
 
     my $input = InputFromData.new(:@indata);
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$input, :$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$input, :$output);
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -91,8 +91,8 @@ sub outputs($program, $expected, $desc = "MISSING TEST DESCRIPTION", :@indata = 
 
 sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is export {
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output);
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -108,8 +108,8 @@ sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is 
 
 sub has-exit-code($program, $expected-exit-code, $desc = "MISSING TEST DESCRIPTION") is export {
     my $output = UnwantedOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output);
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -118,8 +118,8 @@ sub has-exit-code($program, $expected-exit-code, $desc = "MISSING TEST DESCRIPTI
 
 sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
     my $output = UnwantedOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $parser = _007.parser(:$runtime);
+    my $runtime = Yu.runtime(:$output);
+    my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
     my $emitted-js = Yu::Backend::JavaScript.new.emit($ast);
     my $actual = $emitted-js ~~ /^^ '(() => { // main program' \n ([<!before '})();'> \N+ [\n|$$]]*)/
@@ -134,8 +134,8 @@ sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESC
 sub run-and-collect-output($filepath, :$input = $*IN) is export {
     my $program = slurp($filepath);
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$input, :$output);
-    my $ast = _007.parser(:$runtime).parse($program);
+    my $runtime = Yu.runtime(:$input, :$output);
+    my $ast = Yu.parser(:$runtime).parse($program);
     $runtime.run($ast);
 
     return $output.result;
@@ -148,8 +148,8 @@ sub run-and-collect-lines($filepath, :$input) is export {
 sub run-and-collect-error-message($filepath) is export {
     my $program = slurp($filepath);
     my $output = UnwantedOutput.new;
-    my $runtime = _007.runtime(:$output);
-    my $ast = _007.parser(:$runtime).parse($program);
+    my $runtime = Yu.runtime(:$output);
+    my $ast = Yu.parser(:$runtime).parse($program);
     $runtime.run($ast);
 
     CATCH {

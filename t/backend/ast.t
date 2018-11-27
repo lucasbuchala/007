@@ -1,7 +1,7 @@
 use Test;
 use _007;
 
-my $parser = _007.parser;
+my $parser = Yu.parser;
 
 {
     my $program = 'quasi { if {{{0}}} {} }';
