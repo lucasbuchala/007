@@ -2,7 +2,7 @@ use Yu::Runtime;
 use Yu::Parser;
 use Yu::Linter;
 
-class _007 {
+class Yu {
     method runtime(:$input = $*IN, :$output = $*OUT, :@arguments) {
         Yu::Runtime.new(:$input, :$output, :@arguments);
     }

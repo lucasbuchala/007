@@ -12,7 +12,7 @@ for find("lib", / ".pm6" $/) -> $io {
     }
 }
 
-my $content = slurp("feature-flags.json");
+my $content = slurp("misc/feature-flags.json");
 
 {
     is trailing-commas($content), "", "there are no trailing commas in the feature-flags.json file";

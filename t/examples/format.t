@@ -6,7 +6,7 @@ LEAVE unlink MODIFIED_FORMAT_007_FILENAME;
 my $changed-line = False;
 
 given open(MODIFIED_FORMAT_007_FILENAME, :w) -> $fh {
-    for "examples/format.007".IO.lines -> $line {
+    for "ex/format.007".IO.lines -> $line {
         if $line ~~ /^^ '# ' (.+) $$/ {
             $changed-line = True;
             $fh.say: ~$0;
@@ -21,7 +21,7 @@ given open(MODIFIED_FORMAT_007_FILENAME, :w) -> $fh {
 ok $changed-line, "found a line to un-comment from format.007";
 
 {
-    my @lines = run-and-collect-lines("examples/format.007");
+    my @lines = run-and-collect-lines("ex/format.007");
 
     is +@lines, 2, "correct number of lines";
 

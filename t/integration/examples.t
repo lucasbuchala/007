@@ -2,7 +2,7 @@ use v6;
 use Test;
 use Yu::Test;
 
-my @examples = find("examples", / ".007" $/).map(-> $file { $file.basename.subst(/ ".007" $/, "", :g) });
+my @examples = find("ex", / ".007" $/).map(-> $file { $file.basename.subst(/ ".007" $/, "", :g) });
 
 my @example-tests = find("t/examples", / ".t" $/).map(-> $file { $file.basename.subst(/ ".t" $/, "", :g) });
 

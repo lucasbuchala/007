@@ -1,5 +1,5 @@
 {
-    "name"      : "007",
+    "name"      : "Yu",
     "perl"      : "6.c",
     "version"   : "*",
     "authors"   : [ "github:masak" ],
@@ -7,20 +7,20 @@
     "depends"   : [],
     "license"   : "Artistic-2.0",
     "provides" : {
-        "_007" : "lib/Yu.pm6",
-        "Yu::Backend::JavaScript" : "lib/_007/Backend/JavaScript.pm6",
-        "Yu::Equal" : "lib/_007/Equal.pm6",
-        "Yu::Linter" : "lib/_007/Linter.pm6",
-        "Yu::OpScope" : "lib/_007/OpScope.pm6",
-        "Yu::Parser" : "lib/_007/Parser.pm6",
-        "Yu::Parser::Actions" : "lib/_007/Parser/Actions.pm6",
-        "Yu::Parser::Syntax" : "lib/_007/Parser/Syntax.pm6",
-        "Yu::Precedence" : "lib/_007/Precedence.pm6",
-        "Yu::Q" : "lib/_007/Q.pm6",
-        "Yu::Runtime" : "lib/_007/Runtime.pm6",
-        "Yu::Builtins" : "lib/_007/Builtins.pm6",
-        "Yu::Test" : "lib/_007/Test.pm6",
-        "Yu::Val" : "lib/_007/Val.pm6"
+        "Yu"                      : "lib/Yu.pm6",
+        "Yu::Backend::JavaScript" : "lib/Yu/Backend/JavaScript.pm6",
+        "Yu::Equal"               : "lib/Yu/Equal.pm6",
+        "Yu::Linter"              : "lib/Yu/Linter.pm6",
+        "Yu::OpScope"             : "lib/Yu/OpScope.pm6",
+        "Yu::Parser"              : "lib/Yu/Parser.pm6",
+        "Yu::Parser::Actions"     : "lib/Yu/Parser/Actions.pm6",
+        "Yu::Parser::Syntax"      : "lib/Yu/Parser/Syntax.pm6",
+        "Yu::Precedence"          : "lib/Yu/Precedence.pm6",
+        "Yu::Q"                   : "lib/Yu/Q.pm6",
+        "Yu::Runtime"             : "lib/Yu/Runtime.pm6",
+        "Yu::Builtins"            : "lib/Yu/Builtins.pm6",
+        "Yu::Test"                : "lib/Yu/Test.pm6",
+        "Yu::Val"                 : "lib/Yu/Val.pm6"
     },
     "support" : { "source"    : "git://github.com/masak/007.git" }
 }

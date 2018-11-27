@@ -1,7 +1,7 @@
 use Test;
 use Yu::Test;
 
-my @lines = run-and-collect-lines("examples/quicksort.007");
+my @lines = run-and-collect-lines("ex/quicksort.007");
 
 is +@lines, 3, "correct number of lines of output";
 
