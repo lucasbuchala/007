@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use _007;
+use Yu;
 use Yu::Test;
 
 {

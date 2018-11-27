@@ -1,5 +1,5 @@
 use Test;
-use _007;
+use Yu;
 
 my $parser = Yu.parser;
 
