@@ -1,7 +1,7 @@
 use Test;
 use Yu::Test;
 
-my @lines = run-and-collect-lines("ex/hanoi.007");
+my @lines = run-and-collect-lines("ex/hanoi.yu");
 
 sub parse-state(@lines) {
     my @state = [], [], [];

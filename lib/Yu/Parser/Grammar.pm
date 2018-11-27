@@ -7,7 +7,7 @@ sub check-feature-flag($feature, $word) {
         unless %*ENV{$flag};
 }
 
-grammar Yu::Parser::Syntax {
+grammar Yu::Parser::Grammar {
     token TOP { <compunit> }
 
     token compunit {

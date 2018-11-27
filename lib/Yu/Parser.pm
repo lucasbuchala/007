@@ -1,4 +1,4 @@
-use Yu::Parser::Syntax;
+use Yu::Parser::Grammar;
 use Yu::Parser::Actions;
 
 class Yu::Parser {
@@ -19,7 +19,7 @@ class Yu::Parser {
         my $*parser = self;
         my $*runtime = $!runtime;
         @!checks = ();
-        Yu::Parser::Syntax.parse($program, :actions(Yu::Parser::Actions))
+        Yu::Parser::Grammar.parse($program, :actions(Yu::Parser::Actions))
             or die "Could not parse program";   # XXX: make this into X::
         for @!checks -> &check {
             &check();

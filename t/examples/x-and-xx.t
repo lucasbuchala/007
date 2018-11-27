@@ -1,7 +1,7 @@
 use Test;
 use Yu::Test;
 
-my @lines = run-and-collect-lines("ex/x-and-xx.007");
+my @lines = run-and-collect-lines("ex/x-and-xx.yu");
 
 is +@lines, 4, "correct number of lines";
 

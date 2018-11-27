@@ -2,7 +2,7 @@ use v6;
 use Test;
 use Yu::Test;
 
-my $files = find(".", /[".pm6" | ".t"] $/)\
+my $files = find(".", /[".pm" | ".t"] $/)\
     .grep({ $_ !~~ / "no-commented-out-debug-code.t" / })\
     .join(" ");
 

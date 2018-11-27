@@ -1,6 +1,6 @@
 use Yu::Val;
 use Yu::Q;
-use Yu::Parser::Syntax;
+use Yu::Parser::Grammar;
 use MONKEY-SEE-NO-EVAL;
 
 class X::String::Newline is Exception {

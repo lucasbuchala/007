@@ -3,7 +3,7 @@ use Test;
 use Yu::Test;
 
 my %flags-checked;
-for find("lib", / ".pm6" $/) -> $io {
+for find("lib", / ".pm" $/) -> $io {
     for $io.lines -> $line {
         if $line ~~ / '{ check-feature-flag("' <-["]>+ '",' \h* '"' (\w+) / {
             my $flag = ~$0;

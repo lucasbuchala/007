@@ -3,7 +3,7 @@ use Test;
 use Yu::Test;
 
 my @lines-with-unorthodox-indent;
-for find("lib/", /[".pm6" | ".007"] $/) -> $file {
+for find("lib/", /[".pm" | ".yu"] $/) -> $file {
     for $file.IO.lines.kv -> $i, $line {
         next unless $line ~~ /^ \h+/;
 

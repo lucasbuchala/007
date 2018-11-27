@@ -3,7 +3,7 @@ use Test;
 use Yu::Test;
 
 my @lines-ending-with-ws;
-for find(".", /[".pm6" | ".007"] $/) -> $file {
+for find(".", /[".pm" | ".yu"] $/) -> $file {
     for $file.IO.lines.kv -> $i, $line {
         if $line ~~ /\h $/ {
             push @lines-ending-with-ws,

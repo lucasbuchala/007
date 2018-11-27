@@ -1,10 +1,10 @@
 use Test;
 use Yu::Test;
 
-my @lines = run-and-collect-lines("ex/quine.007");
+my @lines = run-and-collect-lines("ex/quine.yu");
 
 is @lines.map({ "$_\n" }).join,
-    slurp("ex/quine.007"),
+    slurp("ex/quine.yu"),
     "the quine outputs itself";
 
 done-testing;

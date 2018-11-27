@@ -1,7 +1,7 @@
 use Test;
 use Yu::Test;
 
-my @lines = run-and-collect-lines("ex/nim-addition.007");
+my @lines = run-and-collect-lines("ex/nim-addition.yu");
 
 is +@lines, 5, "correct number of lines of output";
 is @lines[0], "0", "line #1 correct";

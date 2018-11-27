@@ -2,7 +2,7 @@ use Yu;
 use Yu::Val;
 use Yu::Q;
 use Yu::Parser::Actions;
-use Yu::Backend::JavaScript;
+use Yu::Backend::Perl5;
 
 use Test;
 
@@ -121,7 +121,7 @@ sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESC
     my $runtime = Yu.runtime(:$output);
     my $parser = Yu.parser(:$runtime);
     my $ast = $parser.parse($program);
-    my $emitted-js = Yu::Backend::JavaScript.new.emit($ast);
+    my $emitted-js = Yu::Backend::Perl5.new.emit($ast);
     my $actual = $emitted-js ~~ /^^ '(() => { // main program' \n ([<!before '})();'> \N+ [\n|$$]]*)/
         ?? (~$0).indent(*)
         !! $emitted-js;

@@ -9,7 +9,7 @@ my %builtins =
         ----
 ;
 
-class Yu::Backend::JavaScript {
+class Yu::Backend::Perl5 {
     method emit(Q::CompUnit $compunit) {
         return ""
             unless $compunit.block.statementlist.statements.elements;
