@@ -3,7 +3,7 @@ use Yu::Q;
 
 # These multis are used below by infix:<==> and infix:<!=>
 multi equal-value($, $) is export { False }
-multi equal-value(Val::NoneType, Val::NoneType) { True }
+multi equal-value(Val::NilType, Val::NilType) { True }
 multi equal-value(Val::Bool $l, Val::Bool $r) { $l.value == $r.value }
 multi equal-value(Val::Int $l, Val::Int $r) { $l.value == $r.value }
 multi equal-value(Val::Str $l, Val::Str $r) { $l.value eq $r.value }

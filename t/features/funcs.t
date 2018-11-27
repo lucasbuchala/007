@@ -81,7 +81,7 @@ use Yu::Test;
         }
         .
 
-    outputs $program, "None\n", "using an outer lexical in a func that's called before the outer lexical's declaration";
+    outputs $program, "nil\n", "using an outer lexical in a func that's called before the outer lexical's declaration";
 }
 
 {

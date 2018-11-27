@@ -359,10 +359,10 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
-        say(NoneType.create([]));
+        say(NilType.create([]));
         .
 
-    runtime-error $program, X::Uninstantiable, "can't instantiate a NoneType";
+    runtime-error $program, X::Uninstantiable, "can't instantiate a NilType";
 }
 
 {

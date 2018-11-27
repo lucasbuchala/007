@@ -6,7 +6,7 @@ use Yu::Equal;
 constant NO_OUTER = Val::Object.new;
 constant RETURN_TO = Q::Identifier.new(
     :name(Val::Str.new(:value("--RETURN-TO--"))),
-    :frame(NONE));
+    :frame(NIL));
 constant EXIT_SUCCESS = 0;
 
 class Yu::Runtime {
@@ -81,7 +81,7 @@ class Yu::Runtime {
         for $static-lexpad.properties.kv -> $name, $value {
             my $identifier = Q::Identifier.new(
                 :name(Val::Str.new(:value($name))),
-                :frame(NONE));
+                :frame(NIL));
             self.declare-var($identifier, $value);
         }
         for $statementlist.statements.elements.kv -> $i, $_ {
@@ -128,7 +128,7 @@ class Yu::Runtime {
     }
 
     method !maybe-find-pad(Str $symbol, $frame is copy) {
-        if $frame ~~ Val::NoneType {    # XXX: make a `defined` method on NoneType so we can use `//`
+        if $frame ~~ Val::NilType {    # XXX: make a `defined` method on NilType so we can use `//`
             $frame = self.current-frame;
         }
         repeat until $frame === NO_OUTER {
@@ -142,7 +142,7 @@ class Yu::Runtime {
 
     method put-var(Q::Identifier $identifier, $value) {
         my $name = $identifier.name.value;
-        my $frame = $identifier.frame ~~ Val::NoneType
+        my $frame = $identifier.frame ~~ Val::NilType
             ?? self.current-frame
             !! $identifier.frame;
         my $pad = self!find-pad($name, $frame);
@@ -162,10 +162,10 @@ class Yu::Runtime {
 
     method declare-var(Q::Identifier $identifier, $value?) {
         my $name = $identifier.name.value;
-        my Val::Object $frame = $identifier.frame ~~ Val::NoneType
+        my Val::Object $frame = $identifier.frame ~~ Val::NilType
             ?? self.current-frame
             !! $identifier.frame;
-        $frame.properties<pad>.properties{$name} = $value // NONE;
+        $frame.properties<pad>.properties{$name} = $value // NIL;
     }
 
     method declared($name) {
@@ -197,7 +197,7 @@ class Yu::Runtime {
                 $.output.print($argument.Str);
             }
             $.output.print("\n");
-            return NONE;
+            return NIL;
         }
         else {
             my $paramcount = $c.parameterlist.parameters.elements.elems;
@@ -211,12 +211,12 @@ class Yu::Runtime {
             my $value = $.input.get();
             if !$value.defined {
                 $.output.print("\n");
-                return NONE;
+                return NIL;
             }
             return Val::Str.new(:$value);
         }
         if $c.hook -> &hook {
-            return &hook(|@arguments) || NONE;
+            return &hook(|@arguments) || NIL;
         }
         self.enter($c.outer-frame, $c.static-lexpad, $c.statementlist, $c);
         for @($c.parameterlist.parameters.elements) Z @arguments -> ($param, $arg) {
@@ -233,7 +233,7 @@ class Yu::Runtime {
                 return .value;
             }
         }
-        $value || NONE
+        $value || NIL
     }
 
     method property($obj, Str $propname) {
@@ -263,7 +263,7 @@ class Yu::Runtime {
                     return $thing
                         if $thing ~~ Val;
 
-                    return $thing.new(:name($thing.name), :frame(NONE))
+                    return $thing.new(:name($thing.name), :frame(NIL))
                         if $thing ~~ Q::Identifier;
 
                     return $thing
@@ -463,7 +463,7 @@ class Yu::Runtime {
         elsif $obj ~~ Val::Array && $propname eq "push" {
             return builtin(sub push($newelem) {
                 $obj.elements.push($newelem);
-                return NONE;
+                return NIL;
             });
         }
         elsif $obj ~~ Val::Array && $propname eq "pop" {
@@ -483,7 +483,7 @@ class Yu::Runtime {
         elsif $obj ~~ Val::Array && $propname eq "unshift" {
             return builtin(sub unshift($newelem) {
                 $obj.elements.unshift($newelem);
-                return NONE;
+                return NIL;
             });
         }
         elsif $obj ~~ Val::Type && $propname eq "name" {
@@ -628,8 +628,8 @@ class Yu::Runtime {
         elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Int" {
             return Val::Type.of(Q::Literal::Int);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "None" {
-            return Val::Type.of(Q::Literal::None);
+        elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Nil" {
+            return Val::Type.of(Q::Literal::Nil);
         }
         elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Str" {
             return Val::Type.of(Q::Literal::Str);

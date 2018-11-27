@@ -106,7 +106,7 @@ class Yu::Parser::Actions {
         if $<EXPR>.ast ~~ Q::Block {
             make Q::Statement::Expr.new(:expr(Q::Postfix::Call.new(
                 :identifier(Q::Identifier.new(:name(Val::Str.new(:value("postfix:()"))))),
-                :operand(Q::Term::Func.new(:identifier(NONE), :block($<EXPR>.ast))),
+                :operand(Q::Term::Func.new(:identifier(NIL), :block($<EXPR>.ast))),
                 :argumentlist(Q::ArgumentList.new)
             )));
         }
@@ -154,18 +154,18 @@ class Yu::Parser::Actions {
     method statement:return ($/) {
         die X::ControlFlow::Return.new
             unless $*in_routine;
-        make Q::Statement::Return.new(:expr($<EXPR> ?? $<EXPR>.ast !! NONE));
+        make Q::Statement::Return.new(:expr($<EXPR> ?? $<EXPR>.ast !! NIL));
     }
 
     method statement:throw ($/) {
-        make Q::Statement::Throw.new(:expr($<EXPR> ?? $<EXPR>.ast !! NONE));
+        make Q::Statement::Throw.new(:expr($<EXPR> ?? $<EXPR>.ast !! NIL));
     }
 
     method statement:if ($/) {
         my %parameters = $<xblock>.ast;
         %parameters<else> = $<else> :exists
             ?? $<else>.ast
-            !! NONE;
+            !! NIL;
 
         make Q::Statement::If.new(|%parameters);
     }
@@ -252,7 +252,7 @@ class Yu::Parser::Actions {
             if $expansion ~~ Q::Statement {
                 $expansion = Q::StatementList.new(:statements(Val::Array.new(:elements([$expansion]))));
             }
-            elsif $expansion === NONE {
+            elsif $expansion === NIL {
                 $expansion = Q::StatementList.new(:statements(Val::Array.new(:elements([]))));
             }
 
@@ -445,7 +445,7 @@ class Yu::Parser::Actions {
             :name(Val::Str.new(:value("prefix:$op"))),
             :frame($*runtime.current-frame),
         );
-        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::NoneType));
+        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::NilType));
     }
 
     method prefix-unquote($/) {
@@ -462,8 +462,8 @@ class Yu::Parser::Actions {
         make Q::Literal::Str.new(:$value);
     }
 
-    method term:none ($/) {
-        make Q::Literal::None.new;
+    method term:nil ($/) {
+        make Q::Literal::Nil.new;
     }
 
     method term:false ($/) {
@@ -613,7 +613,7 @@ class Yu::Parser::Actions {
         my $name = $<identifier>.ast.name;
         my $identifier = $<identifier>
             ?? Q::Identifier.new(:$name)
-            !! NONE;
+            !! NIL;
         make Q::Term::Func.new(:$identifier, :$traitlist, :$block);
     }
 
@@ -727,7 +727,7 @@ class Yu::Parser::Actions {
         my $identifier = Q::Identifier.new(
             :name(Val::Str.new(:value("infix:$op"))),
         );
-        make $*parser.opscope.ops<infix>{$op}.new(:$identifier, :lhs(NONE), :rhs(NONE));
+        make $*parser.opscope.ops<infix>{$op}.new(:$identifier, :lhs(NIL), :rhs(NIL));
     }
 
     method infix-unquote($/) {
@@ -756,16 +756,16 @@ class Yu::Parser::Actions {
         # XXX: this can't stay hardcoded forever, but we don't have the machinery yet
         # to do these right enough
         if $<index> {
-            make Q::Postfix::Index.new(index => $<EXPR>.ast, :$identifier, :operand(NONE));
+            make Q::Postfix::Index.new(index => $<EXPR>.ast, :$identifier, :operand(NIL));
         }
         elsif $<call> {
-            make Q::Postfix::Call.new(argumentlist => $<argumentlist>.ast, :$identifier, :operand(NONE));
+            make Q::Postfix::Call.new(argumentlist => $<argumentlist>.ast, :$identifier, :operand(NIL));
         }
         elsif $<prop> {
-            make Q::Postfix::Property.new(property => $<identifier>.ast, :$identifier, :operand(NONE));
+            make Q::Postfix::Property.new(property => $<identifier>.ast, :$identifier, :operand(NIL));
         }
         else {
-            make $*parser.opscope.ops<postfix>{$op}.new(:$identifier, :operand(NONE));
+            make $*parser.opscope.ops<postfix>{$op}.new(:$identifier, :operand(NIL));
         }
     }
 

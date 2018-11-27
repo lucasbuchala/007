@@ -112,7 +112,7 @@ role Q::Term does Q::Expr {
 ### ### Q::Literal
 ###
 ### A literal; a constant value written out explicitly in the program, such as
-### `None`, `True`, `5`, or `"James Bond"`.
+### `nil`, `True`, `5`, or `"James Bond"`.
 ###
 ### Compound values such as arrays and objects are considered terms but not
 ### literals.
@@ -120,12 +120,12 @@ role Q::Term does Q::Expr {
 role Q::Literal does Q::Term {
 }
 
-### ### Q::Literal::None
+### ### Q::Literal::Nil
 ###
-### The `None` literal.
+### The `nil` literal.
 ###
-class Q::Literal::None does Q::Literal {
-    method eval($) { NONE }
+class Q::Literal::Nil does Q::Literal {
+    method eval($) { NIL }
 }
 
 ### ### Q::Literal::Bool
@@ -171,7 +171,7 @@ class Q::Literal::Str does Q::Literal {
 ###
 class Q::Identifier does Q::Term {
     has Val::Str $.name;
-    has $.frame = NONE;
+    has $.frame = NIL;
 
     method attribute-order { <name> }
 
@@ -379,7 +379,7 @@ class Q::Term::Func does Q::Term does Q::Declaration {
     method attribute-order { <identifier traitlist block> }
 
     method eval($runtime) {
-        my $name = $.identifier ~~ Val::NoneType
+        my $name = $.identifier ~~ Val::NilType
             ?? Val::Str.new(:value(""))
             !! $.identifier.name;
         return Val::Func.new(
@@ -479,12 +479,12 @@ class Q::Infix::Or is Q::Infix {
 ### ### Q::Infix::DefinedOr
 ###
 ### A short-circuiting "defined-or" operator. Evaluates its
-### right-hand side only if the left-hand side is `None`.
+### right-hand side only if the left-hand side is `nil`.
 ###
 class Q::Infix::DefinedOr is Q::Infix {
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
-        return $l !~~ Val::NoneType
+        return $l !~~ Val::NilType
             ?? $l
             !! $.rhs.eval($runtime);
     }
@@ -685,7 +685,7 @@ class Q::Term::Quasi does Q::Term {
             return $thing
                 if $thing ~~ Val;
 
-            return $thing.new(:name($thing.name), :frame($needs-displacement ?? $runtime.current-frame !! NONE))
+            return $thing.new(:name($thing.name), :frame($needs-displacement ?? $runtime.current-frame !! NIL))
                 if $thing ~~ Q::Identifier;
 
             if $thing ~~ Q::Unquote::Prefix {
@@ -797,7 +797,7 @@ class Q::Statement::Expr does Q::Statement {
 class Q::Statement::If does Q::Statement {
     has $.expr;
     has $.block;
-    has $.else = NONE;
+    has $.else = NIL;
 
     method attribute-order { <expr block else> }
 
@@ -906,10 +906,10 @@ class Q::Statement::While does Q::Statement {
 ### A `return` statement.
 ###
 class Q::Statement::Return does Q::Statement {
-    has $.expr = NONE;
+    has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NoneType ?? $.expr !! $.expr.eval($runtime);
+        my $value = $.expr ~~ Val::NilType ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
@@ -920,10 +920,10 @@ class Q::Statement::Return does Q::Statement {
 ### A `throw` statement.
 ###
 class Q::Statement::Throw does Q::Statement {
-    has $.expr = NONE;
+    has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NoneType
+        my $value = $.expr ~~ Val::NilType
             ?? Val::Exception.new(:message(Val::Str.new(:value("Died"))))
             !! $.expr.eval($runtime);
         die X::TypeCheck.new(:got($value), :excpected(Val::Exception))
@@ -1004,7 +1004,7 @@ class Q::StatementList does Q {
                 return $value;
             }
         }
-        return NONE;
+        return NIL;
     }
 }
 

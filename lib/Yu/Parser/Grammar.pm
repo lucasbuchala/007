@@ -189,7 +189,7 @@ grammar Yu::Parser::Grammar {
     }
 
     proto token term {*}
-    token term:none { None» }
+    token term:nil { nil» }
     token term:false { false» }
     token term:true { true» }
     token term:int { \d+ }
@@ -212,9 +212,9 @@ grammar Yu::Parser::Grammar {
             || "<" <.ws> $<qtype>=["Q.Identifier"] ">" <.ws> '{' <.ws> <term:identifier> <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.Block"] ">" <.ws> '{' <.ws> <block> <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.CompUnit"] ">" <.ws> '{' <.ws> [<compunit=.unquote("Q.CompUnit")> || <compunit>] <.ws> '}'
-            || "<" <.ws> $<qtype>=["Q.Literal"] ">" <.ws> '{' <.ws> [<term:int> | <term:none> | <term:str>] <.ws> '}'
+            || "<" <.ws> $<qtype>=["Q.Literal"] ">" <.ws> '{' <.ws> [<term:int> | <term:nil> | <term:str>] <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.Literal.Int"] ">" <.ws> '{' <.ws> <term:int> <.ws> '}'
-            || "<" <.ws> $<qtype>=["Q.Literal.None"] ">" <.ws> '{' <.ws> <term:none> <.ws> '}'
+            || "<" <.ws> $<qtype>=["Q.Literal.Nil"] ">" <.ws> '{' <.ws> <term:nil> <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.Literal.Str"] ">" <.ws> '{' <.ws> <term:str> <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.Property"] ">" <.ws> '{' <.ws> <property> <.ws> '}'
             || "<" <.ws> $<qtype>=["Q.PropertyList"] ">" <.ws> '{' <.ws> <propertylist> <.ws> '}'

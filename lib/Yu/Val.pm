@@ -19,7 +19,7 @@ role Val {
     }
 }
 
-### ### NoneType
+### ### NilType
 ###
 ### A type with only one value, indicating the lack of a value where one was
 ### expected.
@@ -27,41 +27,41 @@ role Val {
 ### It is the value variables have that haven't been assigned to:
 ###
 ###     my empty;
-###     say(empty);         # --> `None`
+###     say(empty);         # --> `nil`
 ###
 ### It is also the value returned from a subroutine that didn't explicitly
 ### return a value:
 ###
 ###     func noreturn() {
 ###     }
-###     say(noreturn());    # --> `None`
+###     say(noreturn());    # --> `nil`
 ###
 ### Finally, it's found in various places in the Q hierarchy to indicate that
 ### a certain child element is not present. For example, an `if` statement
 ### doesn't always have an `else` statement. When it doesn't, the `.else`
-### property is set to `None`.
+### property is set to `nil`.
 ###
-###     say(type((quasi<Q.Statement> { if 1 {} }).else)); # --> `<type NoneType>`
+###     say(type((quasi<Q.Statement> { if 1 {} }).else)); # --> `<type NilType>`
 ###
-### The value `None` is falsy, stringifies to `None`, and doesn't numify.
+### The value `nil` is falsy, stringifies to `nil`, and doesn't numify.
 ###
-###     say(!!None);        # --> `false`
-###     say(~None);         # --> `None`
-###     say(+None);         # <ERROR X::TypeCheck>
+###     say(!!nil);        # --> `false`
+###     say(~nil);         # --> `nil`
+###     say(+nil);         # <ERROR X::TypeCheck>
 ###
-### Since `None` is often used as a default, there's an operator `infix:<//>`
-### that evaluates its right-hand side if it finds `None` on the left:
+### Since `nil` is often used as a default, there's an operator `infix:<//>`
+### that evaluates its right-hand side if it finds `nil` on the left:
 ###
-###     say(None // "default");     # --> `default`
+###     say(nil // "default");     # --> `default`
 ###     say("value" // "default");  # --> `value`
 ###
-class Val::NoneType does Val {
+class Val::NilType does Val {
     method truthy {
         False
     }
 }
 
-constant NONE is export = Val::NoneType.new;
+constant NIL is export = Val::NilType.new;
 
 ### ### Bool
 ###
@@ -84,7 +84,7 @@ constant NONE is export = Val::NoneType.new;
 ###             say("falsy");
 ###         }
 ###     }
-###     check(None);            # --> `falsy`
+###     check(nil);            # --> `falsy`
 ###     check(false);           # --> `falsy`
 ###     check(0);               # --> `falsy`
 ###     check("");              # --> `falsy`
@@ -103,8 +103,8 @@ constant NONE is export = Val::NoneType.new;
 ###
 ###     say(1 || 2);            # --> `1`
 ###     say(1 && 2);            # --> `2`
-###     say(None && "!");       # --> `None`
-###     say(None || "!");       # --> `!`
+###     say(nil && "!");       # --> `nil`
+###     say(nil || "!");       # --> `!`
 ###
 class Val::Bool does Val {
     has Bool $.value;
@@ -478,7 +478,7 @@ our $global-object-id = 0;
 ###
 ###     my o11 = {
 ###         foo: 42,
-###         bar: None
+###         bar: nil
 ###     };
 ###     say(o11.has("foo"));        # --> `true`
 ###     say(o11.has("bar"));        # --> `true`
@@ -529,7 +529,7 @@ class Val::Object does Val {
 ###     say(type({}));          # --> `<type Object>`
 ###     say(type(type({})));    # --> `<type Type>`
 ###
-### 007 comes with a number of built-in types: `NoneType`, `Bool`, `Int`,
+### 007 comes with a number of built-in types: `NilType`, `Bool`, `Int`,
 ### `Str`, `Array`, `Object`, `Regex`, `Type`, `Block`, `Sub`, `Macro`,
 ### and `Exception`.
 ###
@@ -595,7 +595,7 @@ class Val::Type does Val {
                 method ^name(\$) \{ "{$name}" \}
             \}]));
         }
-        elsif $.type ~~ Val::NoneType || $.type ~~ Val::Bool || is-role($.type) {
+        elsif $.type ~~ Val::NilType || $.type ~~ Val::Bool || is-role($.type) {
             die X::Uninstantiable.new(:$.name);
         }
         else {
@@ -686,7 +686,7 @@ class Val::Exception does Val {
 
 class Helper {
     our sub Str($_) {
-        when Val::NoneType { "None" }
+        when Val::NilType { 'nil' }
         when Val::Bool { .value.Str }
         when Val::Int { .value.Str }
         when Val::Str { .value }

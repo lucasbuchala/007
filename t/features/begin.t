@@ -29,7 +29,7 @@ use Yu::Test;
 
     outputs
         $program,
-        "None\n7\n",
+        "nil\n7\n",
         "variables are declared already at parse time (but not assigned)";
 }
 
@@ -49,7 +49,7 @@ use Yu::Test;
 
     outputs
         $program,
-        "None\n",
+        "nil\n",
         "BEGIN blocks are scoped just like everything else";
 }
 

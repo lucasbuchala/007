@@ -9,7 +9,7 @@ class X::Control::Exit is Exception {
 
 sub wrap($_) {
     when Val | Q { $_ }
-    when Nil  { NONE }
+    when Nil  { NIL }
     when Bool { Val::Bool.new(:value($_)) }
     when Int  { Val::Int.new(:value($_)) }
     when Str  { Val::Str.new(:value($_)) }

@@ -4,7 +4,7 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
-        if None { say("falsy none") }
+        if nil { say("falsy nil") }
         if 0 { say("falsy int") }
         if 7 { say("truthy int") }
         if "" { say("falsy str") }

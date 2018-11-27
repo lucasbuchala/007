@@ -26,7 +26,7 @@ use Yu::Test;
         say(moo());
         .
 
-    outputs $program, "None\n", "Empty quasiquote results in a None value";
+    outputs $program, "nil\n", "Empty quasiquote results in a nil value";
 }
 
 {
@@ -142,12 +142,12 @@ use Yu::Test;
 {
     my $program = q:to/./;
         say(type(quasi<Q.Literal> { 7 }));
-        say(type(quasi<Q.Literal> { None }));
+        say(type(quasi<Q.Literal> { nil }));
         say(type(quasi<Q.Literal> { "James Bond" }));
         .
 
     outputs $program,
-        "<type Q.Literal.Int>\n<type Q.Literal.None>\n<type Q.Literal.Str>\n",
+        "<type Q.Literal.Int>\n<type Q.Literal.Nil>\n<type Q.Literal.Str>\n",
         "quasi<Q.Literal>";
 }
 
@@ -161,10 +161,10 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
-        say(type(quasi<Q.Literal.None> { None }));
+        say(type(quasi<Q.Literal.Nil> { nil }));
         .
 
-    outputs $program, "<type Q.Literal.None>\n", "quasi<Q.Literal.None>";
+    outputs $program, "<type Q.Literal.Nil>\n", "quasi<Q.Literal.Nil>";
 }
 
 {
@@ -207,7 +207,7 @@ use Yu::Test;
 {
     my $program = q:to/./;
         say(type(quasi<Q.Term> { 7 }));
-        say(type(quasi<Q.Term> { None }));
+        say(type(quasi<Q.Term> { nil }));
         say(type(quasi<Q.Term> { "James Bond" }));
         say(type(quasi<Q.Term> { [0, 0, 7] }));
         say(type(quasi<Q.Term> { new Object { james: "Bond" } }));
@@ -216,7 +216,7 @@ use Yu::Test;
         .
 
     outputs $program,
-        <Literal.Int Literal.None Literal.Str
+        <Literal.Int Literal.Nil Literal.Str
             Term.Array Term.Object Term.Quasi
             Infix>\
             .map({ "<type Q.$_>\n" }).join,

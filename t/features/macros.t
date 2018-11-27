@@ -63,7 +63,7 @@ use Yu::Test;
 {
     my $program = q:to/./;
         macro foo() {
-            return None;
+            return nil;
         }
 
         foo();
@@ -73,7 +73,7 @@ use Yu::Test;
     outputs
         $program,
         "OH HAI\n",
-        "a macro that returns `None` expands to nothing";
+        "a macro that returns `nil` expands to nothing";
 }
 
 done-testing;

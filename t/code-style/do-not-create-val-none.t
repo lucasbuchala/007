@@ -6,12 +6,12 @@ my $files = find(".", /[".pm" | ".t"] $/)\
     .grep({ $_ !~~ / "do-not-create-val-none.t" / })\
     .join(" ");
 
-my @lines-with-val-none-new =
-    qqx[grep -Fwrin 'Val::NoneType.new' $files].lines\
-        # exception: we store Val::NoneType.new once as a constant
-        .grep({ $_ !~~ /  ":constant NONE is export = " / });
+my @lines-with-val-nil-new =
+    qqx[grep -Fwrin 'Val::NilType.new' $files].lines\
+        # exception: we store Val::NilType.new once as a constant
+        .grep({ $_ !~~ /  ":constant NIL is export = " / });
 
-is @lines-with-val-none-new.join("\n"), "",
-    "no unnecessary calls to Val::NoneType.new";
+is @lines-with-val-nil-new.join("\n"), "",
+    "no unnecessary calls to Val::NilType.new";
 
 done-testing;

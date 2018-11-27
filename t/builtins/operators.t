@@ -331,19 +331,19 @@ use Yu::Test;
         "boolean operators give the values expected";
     outputs 'say(false && say("foo")); say(true || say("bar"))', "false\ntrue\n",
         "boolean operators short-circuit";
-    outputs 'say(1 && 2); say("" && 3); say(false || None); say([0, 0, 7] || false)', "2\n\nNone\n[0, 0, 7]\n",
+    outputs 'say(1 && 2); say("" && 3); say(false || nil); say([0, 0, 7] || false)', "2\n\nnil\n[0, 0, 7]\n",
         "boolean operators return one of their operands";
 }
 
 {
     my $program = q:to/./;
-        say(None == None);
-        say(None == 0);
-        say(None == "");
-        say(None == []);
+        say(nil == nil);
+        say(nil == 0);
+        say(nil == "");
+        say(nil == []);
         .
 
-    outputs $program, "true\nfalse\nfalse\nfalse\n", "equality testing with None matches only itself";
+    outputs $program, "true\nfalse\nfalse\nfalse\n", "equality testing with nil matches only itself";
 }
 
 {
@@ -576,10 +576,10 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
-        say(None // "oh, James");
+        say(nil // "oh, James");
         .
 
-    outputs $program, "oh, James\n", "defined-or with None as the lhs";
+    outputs $program, "oh, James\n", "defined-or with nil as the lhs";
 }
 
 {

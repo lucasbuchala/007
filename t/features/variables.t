@@ -8,7 +8,7 @@ use Yu::Test;
         say(u);
         .
 
-    outputs $program, "None\n", "variables can be declared without being assigned";
+    outputs $program, "nil\n", "variables can be declared without being assigned";
 }
 
 done-testing;

@@ -60,7 +60,7 @@ use Yu::Test;
         say(f());
         .
 
-    outputs $program, "None\n", "sub returning nothing";
+    outputs $program, "nil\n", "sub returning nothing";
 }
 
 {

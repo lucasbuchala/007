@@ -23,7 +23,7 @@ my $parser = Yu.parser;
                             parameterlist: Q.ParameterList [],
                             statementlist: Q.StatementList []
                         },
-                        else: None
+                        else: nil
                     }]
                 }
             }]

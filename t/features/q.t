@@ -10,14 +10,14 @@ use Yu::Test;
 
     outputs
         $program,
-        "None\n",
+        "nil\n",
         "Q.Statement.Return can be constructed without an 'expr' property (#84)";
 }
 
 {
     my $program = q:to/./;
         my q = new Q.Statement.If {
-            expr: new Q.Literal.None {},
+            expr: new Q.Literal.Nil {},
             block: new Q.Block {
                 parameterlist: new Q.ParameterList {
                     parameters: []
@@ -32,7 +32,7 @@ use Yu::Test;
 
     outputs
         $program,
-        "None\n",
+        "nil\n",
         "Q.Statement.If can be constructed without an 'else' property (#84)";
 }
 

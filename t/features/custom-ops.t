@@ -472,7 +472,7 @@ use Yu::Test;
             return "Mr. Bond";
         }
 
-        say(-13 ! None);
+        say(-13 ! nil);
         .
 
     outputs $program, "Mr. Bond\n", "can declare an operator with infix:«...»";
@@ -636,7 +636,7 @@ use Yu::Test;
         func fn(l, r) {
             c = c - 1;
             if !c {
-                return None;
+                return nil;
             }
             return fn;
         }

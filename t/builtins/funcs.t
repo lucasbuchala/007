@@ -15,15 +15,15 @@ use Yu::Test;
         say(type(prompt(">>> ")));
         .
 
-    outputs $program, ">>> \n<type NoneType>\n", "say() works";
+    outputs $program, ">>> \n<type NilType>\n", "say() works";
 }
 
 {
     my $program = q:to/./;
-        say(type(None));
+        say(type(nil));
         .
 
-    outputs $program, "<type NoneType>\n", "None type() works";
+    outputs $program, "<type NilType>\n", "nil type() works";
 }
 
 {
