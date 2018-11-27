@@ -136,6 +136,7 @@ class Q::Literal::Bool does Q::Literal {
     has Val::Bool $.value;
 
     method eval($) { $.value }
+    method Str { $!value ?? 'true' !! 'false' }
 }
 
 ### ### Q::Literal::Int

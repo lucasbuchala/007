@@ -2,10 +2,10 @@ func infix:<in>(value, container) {
     if container ~~ Array {
         for container -> elem {
             if elem == value {
-                return True;
+                return true;
             }
         }
-        return False;
+        return false;
     }
     else if container ~~ Object {
         return container.has(value);
@@ -24,10 +24,10 @@ func infix:<not in>(value, container) {
     if container ~~ Array {
         for container -> elem {
             if elem == value {
-                return False;
+                return false;
             }
         }
-        return True;
+        return true;
     }
     else if container ~~ Object {
         return !container.has(value);
