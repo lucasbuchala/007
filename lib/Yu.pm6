@@ -1,14 +1,14 @@
-use _007::Runtime;
-use _007::Parser;
-use _007::Linter;
+use Yu::Runtime;
+use Yu::Parser;
+use Yu::Linter;
 
 class _007 {
     method runtime(:$input = $*IN, :$output = $*OUT, :@arguments) {
-        _007::Runtime.new(:$input, :$output, :@arguments);
+        Yu::Runtime.new(:$input, :$output, :@arguments);
     }
 
     method parser(:$runtime = $.runtime) {
-        _007::Parser.new(:$runtime);
+        Yu::Parser.new(:$runtime);
     }
 
     method !parser-with-no-output {
@@ -18,6 +18,6 @@ class _007 {
     }
 
     method linter(:$parser = self!parser-with-no-output) {
-        _007::Linter.new(:$parser);
+        Yu::Linter.new(:$parser);
     }
 }

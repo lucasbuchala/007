@@ -1,6 +1,6 @@
-use _007::Val;
-use _007::Q;
-use _007::Precedence;
+use Yu::Val;
+use Yu::Q;
+use Yu::Precedence;
 
 class X::Trait::IllegalValue is Exception {
     has Str $.trait;
@@ -20,7 +20,7 @@ class X::Precedence::Incompatible is Exception {
     method message { "Trying to relate a pre/postfix operator with an infix operator" }
 }
 
-class _007::OpScope {
+class Yu::OpScope {
     has %.ops =
         prefix => {},
         infix => {},
@@ -96,7 +96,7 @@ class _007::OpScope {
         }{$category};
 
         sub prec {
-            _007::Precedence.new(:assoc($assoc // "left"), :ops($name => $q));
+            Yu::Precedence.new(:assoc($assoc // "left"), :ops($name => $q));
         }
 
         my @namespace := $category eq 'infix' ?? @!infixprec !! @!prepostfixprec;

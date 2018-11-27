@@ -1,5 +1,5 @@
 use Test;
-use _007::Test;
+use Yu::Test;
 
 constant MODIFIED_FORMAT_007_FILENAME = "format-$*PID.007";
 LEAVE unlink MODIFIED_FORMAT_007_FILENAME;

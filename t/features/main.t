@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use _007;
-use _007::Test;
+use Yu::Test;
 
 {
     my $program = q:to/./;

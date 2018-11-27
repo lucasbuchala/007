@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use _007::Test;
+use Yu::Test;
 
 my $files = find(".", /[".pm6" | ".t"] $/)\
     .grep({ $_ !~~ / "do-not-create-val-none.t" / })\

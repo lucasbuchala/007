@@ -1,5 +1,5 @@
 use Test;
-use _007::Test;
+use Yu::Test;
 
 outputs(
     q[say("Hello, world!");],

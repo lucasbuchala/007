@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use _007::Test;
+use Yu::Test;
 
 my @lines-with-unorthodox-indent;
 for find("lib/", /[".pm6" | ".007"] $/) -> $file {

@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use _007::Test;
+use Yu::Test;
 
 my @lib-pms = find("lib", / ".pm6" $/)».Str;
 

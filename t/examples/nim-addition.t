@@ -1,5 +1,5 @@
 use Test;
-use _007::Test;
+use Yu::Test;
 
 my @lines = run-and-collect-lines("examples/nim-addition.007");
 

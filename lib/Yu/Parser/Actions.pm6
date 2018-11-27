@@ -1,6 +1,6 @@
-use _007::Val;
-use _007::Q;
-use _007::Parser::Syntax;
+use Yu::Val;
+use Yu::Q;
+use Yu::Parser::Syntax;
 use MONKEY-SEE-NO-EVAL;
 
 class X::String::Newline is Exception {
@@ -58,7 +58,7 @@ class X::Export::Nothing is Exception {
     method message { "Nothing to export" }
 }
 
-class _007::Parser::Actions {
+class Yu::Parser::Actions {
     sub finish-block($block) {
         $block.static-lexpad = $*runtime.current-frame.properties<pad>;
         $*runtime.leave;

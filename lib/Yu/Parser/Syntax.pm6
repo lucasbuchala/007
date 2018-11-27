@@ -1,5 +1,5 @@
-use _007::Val;
-use _007::Q;
+use Yu::Val;
+use Yu::Q;
 
 sub check-feature-flag($feature, $word) {
     my $flag = "FLAG_007_{$word}";
@@ -7,7 +7,7 @@ sub check-feature-flag($feature, $word) {
         unless %*ENV{$flag};
 }
 
-grammar _007::Parser::Syntax {
+grammar Yu::Parser::Syntax {
     token TOP { <compunit> }
 
     token compunit {

@@ -1,8 +1,8 @@
 use _007;
-use _007::Val;
-use _007::Q;
-use _007::Parser::Actions;
-use _007::Backend::JavaScript;
+use Yu::Val;
+use Yu::Q;
+use Yu::Parser::Actions;
+use Yu::Backend::JavaScript;
 
 use Test;
 
@@ -97,7 +97,7 @@ sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is 
     $runtime.run($ast);
 
     CATCH {
-        when X::_007::RuntimeException {
+        when X::Yu::RuntimeException {
             is .message, $message, "passing the right Exception's message";
             pass $desc;
         }
@@ -121,7 +121,7 @@ sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESC
     my $runtime = _007.runtime(:$output);
     my $parser = _007.parser(:$runtime);
     my $ast = $parser.parse($program);
-    my $emitted-js = _007::Backend::JavaScript.new.emit($ast);
+    my $emitted-js = Yu::Backend::JavaScript.new.emit($ast);
     my $actual = $emitted-js ~~ /^^ '(() => { // main program' \n ([<!before '})();'> \N+ [\n|$$]]*)/
         ?? (~$0).indent(*)
         !! $emitted-js;

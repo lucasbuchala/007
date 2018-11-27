@@ -1,4 +1,4 @@
-class _007::Precedence {
+class Yu::Precedence {
     has Str $.assoc;
     has %.ops;
 
