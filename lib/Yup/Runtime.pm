@@ -16,6 +16,7 @@ class Yup::Runtime {
     has @!frames;
     has $.builtin-opscope;
     has $.builtin-frame;
+    has $!p-builtin;
     has $!say-builtin;
     has $!prompt-builtin;
     has $!exit-builtin;
@@ -28,6 +29,7 @@ class Yup::Runtime {
             :pad(builtins-pad()))
         );
         @!frames.push($!builtin-frame);
+        $!p-builtin = builtins-pad().properties<p>;
         $!say-builtin = builtins-pad().properties<say>;
         $!prompt-builtin = builtins-pad().properties<prompt>;
         $!exit-builtin = builtins-pad().properties<exit>;
@@ -197,6 +199,12 @@ class Yup::Runtime {
                 $.output.print($argument.Str);
             }
             $.output.print("\n");
+            return NIL;
+        }
+        elsif $c === $!p-builtin {
+            for @arguments -> $argument {
+                $.output.say($argument.quoted-Str);
+            }
             return NIL;
         }
         else {

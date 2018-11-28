@@ -59,6 +59,7 @@ sub op(&fn, :$qtype, :$assoc?, :%precedence?) {
 }
 
 my @builtins =
+    p => -> *$args {},
     say => -> *$args {
         # implementation in Runtime.pm
     },
@@ -327,7 +328,7 @@ my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Val::Str.
     }
     when .value ~~ Block {
         my @elements = .value.signature.params».name».&ditch-sigil».&parameter;
-        if .key eq "say" {
+        if .key eq "say"|'p' {
             @elements = parameter("...args");
         }
         my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
