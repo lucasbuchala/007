@@ -306,7 +306,7 @@ use Yu::Test;
         say("foobar".contains("foo") ~~ Bool);
         .
 
-    outputs $program, "True\n", "contains() returns a Bool value";
+    outputs $program, "true\n", "contains() returns a Bool value";
 }
 
 {

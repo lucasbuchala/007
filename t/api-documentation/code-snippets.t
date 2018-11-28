@@ -5,15 +5,15 @@ use Yu::Test;
 %*ENV<FLAG_007_CLASS> = "1";    # so that we can parse class declarations in the documentation
 %*ENV<FLAG_007_REGEX> = "1";    # so that we can parse regexes in the documentation
 
-for <lib/Yu/Val.pm lib/Yu/Q.pm> -> $file {
+for «'doc/val.md' 'doc/q.md'» -> $file {
     my ($topic, @snippet-lines);
     my $line-number = 0;
     for $file.IO.lines -> $line {
         ++$line-number;
-        if $line ~~ /^ \h* '### ### ' (.+) / {  # a heading
+        if $line ~~ /^ \h* '### ' (.+) / {  # a heading
             $topic = ~$0;
         }
-        elsif $line ~~ /^ \h* '###' ' ' ** 5 (.+) / {  # a code snippet
+        elsif $line ~~ /^ \h* ' ' ** 4 (.+) / {  # a code snippet
             my $snippet-line = ~$0;
             @snippet-lines.push($snippet-line);
 
