@@ -3,7 +3,6 @@ use Test;
 use Yu::Test;
 
 my @taboo-words = <
-    ident
     paramlist
     params
     stmtlist

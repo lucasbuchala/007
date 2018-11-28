@@ -335,8 +335,10 @@ grammar Yu::Parser::Grammar {
         return /<!>/(self);
     }
 
+    token Ident { <.ident> [ '-' <.ident> ]* }
+
     token identifier {
-        <!before \d> \w+
+        <!before \d> <.Ident>
             [ <?after \w> || <.panic("identifier")> ]
             [ [':<' [ '\\>' | '\\\\' | <-[>]> ]+ '>']
             | [':«' [ '\\»' | '\\\\' | <-[»]> ]+ '»'] ]?
