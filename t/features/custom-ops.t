@@ -4,7 +4,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<n>(left, right) {
+        sub infix:<n>(left, right) {
             return 20;
         }
 
@@ -25,7 +25,7 @@ use Yup::Test;
 {
     my $program = q:to/./;
         {
-            func infix:<n>(left, right) {
+            sub infix:<n>(left, right) {
                 return 7;
             }
         }
@@ -37,7 +37,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<+>(left, right) {
+        sub infix:<+>(left, right) {
             return 14;
         }
 
@@ -49,11 +49,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<~~>(left, right) {
+        sub infix:<~~>(left, right) {
             return "wrong";
         }
 
-        func infix:<~~~>(left, right) {
+        sub infix:<~~~>(left, right) {
             return "right";
         }
 
@@ -65,11 +65,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<***>(left, right) {
+        sub infix:<***>(left, right) {
             return "right";
         }
 
-        func infix:<**>(left, right) {
+        sub infix:<**>(left, right) {
             return "wrong";
         }
 
@@ -81,7 +81,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!>(left, right) {
+        sub infix:<!>(left, right) {
             say(left ~ " " ~ right);
         }
 
@@ -93,7 +93,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<*!>(left, right) {
+        sub infix:<*!>(left, right) {
             return 10;
         }
 
@@ -105,7 +105,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<~?>(left, right) is looser(infix:<+>) {
+        sub infix:<~?>(left, right) is looser(infix:<+>) {
             return 6;
         }
 
@@ -117,7 +117,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<~?>(left, right) is tighter(infix:<+>) {
+        sub infix:<~?>(left, right) is tighter(infix:<+>) {
             return 6;
         }
 
@@ -129,11 +129,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<*>(left, right) {
+        sub infix:<*>(left, right) {
             return 18;
         }
 
-        func infix:<~@>(left, right) is tighter(infix:<+>) {
+        sub infix:<~@>(left, right) is tighter(infix:<+>) {
             return 30;
         }
 
@@ -145,7 +145,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!?!>(left, right) is tighter(infix:<+>) is looser(infix:<+>) {
+        sub infix:<!?!>(left, right) is tighter(infix:<+>) is looser(infix:<+>) {
         }
         .
 
@@ -154,7 +154,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!?!>(left, right) is equiv(infix:<+>) is equiv(infix:<*>) {
+        sub infix:<!?!>(left, right) is equiv(infix:<+>) is equiv(infix:<*>) {
         }
         .
 
@@ -164,11 +164,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<@>(left, right) {
+        sub infix:<@>(left, right) {
             return "@";
         }
 
-        func infix:<!>(left, right) is equiv(infix:<@>) {
+        sub infix:<!>(left, right) is equiv(infix:<@>) {
             return "!";
         }
 
@@ -181,7 +181,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!?!>(left, right) is tighter(infix:<+>) is equiv(infix:<+>) {
+        sub infix:<!?!>(left, right) is tighter(infix:<+>) is equiv(infix:<+>) {
         }
         .
 
@@ -190,7 +190,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!++>(left, right) is looser(infix:<+>) is equiv(infix:<+>) {
+        sub infix:<!++>(left, right) is looser(infix:<+>) is equiv(infix:<+>) {
         }
         .
 
@@ -199,7 +199,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<@>(left, right) is assoc("right") {
+        sub infix:<@>(left, right) is assoc("right") {
             return "(" ~ left ~ ", " ~ right ~ ")";
         }
 
@@ -211,7 +211,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<%>(left, right) is assoc("left") {
+        sub infix:<%>(left, right) is assoc("left") {
             return "(" ~ left ~ ", " ~ right ~ ")";
         }
 
@@ -223,7 +223,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:</>(left, right) {
+        sub infix:</>(left, right) {
             return "(" ~ left ~ ", " ~ right ~ ")";
         }
 
@@ -235,7 +235,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!>(left, right) is assoc("non") {
+        sub infix:<!>(left, right) is assoc("non") {
             return "oh, James";
         }
 
@@ -247,7 +247,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!>(left, right) is assoc("non") {
+        sub infix:<!>(left, right) is assoc("non") {
             return "oh, James";
         }
 
@@ -259,7 +259,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<&-&>(left, right) is assoc("salamander") {
+        sub infix:<&-&>(left, right) is assoc("salamander") {
         }
         .
 
@@ -268,10 +268,10 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<@>(left, right) is assoc("right") {
+        sub infix:<@>(left, right) is assoc("right") {
         }
 
-        func infix:<@@>(left, right) is equiv(infix:<@>) {
+        sub infix:<@@>(left, right) is equiv(infix:<@>) {
             return "(" ~ left ~ ", " ~ right ~ ")";
         }
 
@@ -283,10 +283,10 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<@>(left, right) is assoc("non") {
+        sub infix:<@>(left, right) is assoc("non") {
         }
 
-        func infix:<@@>(left, right) is equiv(infix:<@>) {
+        sub infix:<@@>(left, right) is equiv(infix:<@>) {
             return "(" ~ left ~ ", " ~ right ~ ")";
         }
 
@@ -298,10 +298,10 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<%>(left, right) is assoc("left") {
+        sub infix:<%>(left, right) is assoc("left") {
         }
 
-        func infix:<%%>(left, right) is equiv(infix:<%>) is assoc("right") {
+        sub infix:<%%>(left, right) is equiv(infix:<%>) is assoc("right") {
         }
         .
 
@@ -311,7 +311,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func prefix:<¿>(term) {
+        sub prefix:<¿>(term) {
             return 42;
         }
 
@@ -323,7 +323,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<!>(term) {
+        sub postfix:<!>(term) {
             return 1;
         }
 
@@ -335,19 +335,19 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func prefix:<¿>(term) {
+        sub prefix:<¿>(term) {
             return "prefix is looser";
         }
 
-        func postfix:<!>(term) {
+        sub postfix:<!>(term) {
             return "postfix is looser";
         }
 
-        func postfix:<$>(term) {
+        sub postfix:<$>(term) {
             return "postfix is looser";
         }
 
-        func prefix:<%>(term) {
+        sub prefix:<%>(term) {
             return "prefix is looser";
         }
 
@@ -360,19 +360,19 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func prefix:<¿>(term) {
+        sub prefix:<¿>(term) {
             return "prefix is looser";
         }
 
-        func postfix:<!>(term) is looser(prefix:<¿>) {
+        sub postfix:<!>(term) is looser(prefix:<¿>) {
             return "postfix is looser";
         }
 
-        func postfix:<$>(term) {
+        sub postfix:<$>(term) {
             return "postfix is looser";
         }
 
-        func prefix:<%>(term) is tighter(postfix:<$>) {
+        sub prefix:<%>(term) is tighter(postfix:<$>) {
             return "prefix is looser";
         }
 
@@ -385,19 +385,19 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<!>(term) {
+        sub postfix:<!>(term) {
             return "postfix is looser";
         }
 
-        func prefix:<¿>(term) is tighter(postfix:<!>) {
+        sub prefix:<¿>(term) is tighter(postfix:<!>) {
             return "prefix is looser";
         }
 
-        func prefix:<%>(term) {
+        sub prefix:<%>(term) {
             return "prefix is looser";
         }
 
-        func postfix:<$>(term) is looser(prefix:<%>) {
+        sub postfix:<$>(term) is looser(prefix:<%>) {
             return "postfix is looser";
         }
 
@@ -410,19 +410,19 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<¡>(term) is assoc("right") {
+        sub postfix:<¡>(term) is assoc("right") {
             return "postfix is looser";
         }
 
-        func prefix:<¿>(term) is equiv(postfix:<¡>) {
+        sub prefix:<¿>(term) is equiv(postfix:<¡>) {
             return "prefix is looser";
         }
 
-        func prefix:<%>(term) is assoc("left") {
+        sub prefix:<%>(term) is assoc("left") {
             return "prefix is looser";
         }
 
-        func postfix:<$>(term) is equiv(prefix:<%>) {
+        sub postfix:<$>(term) is equiv(prefix:<%>) {
             return "postfix is looser";
         }
 
@@ -436,10 +436,10 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func prefix:<¿>(left, right) is assoc("non") {
+        sub prefix:<¿>(left, right) is assoc("non") {
         }
 
-        func postfix:<!>(left, right) is equiv(prefix:<¿>) {
+        sub postfix:<!>(left, right) is equiv(prefix:<¿>) {
         }
 
         say(¿0!);
@@ -450,7 +450,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<!>(left, right) is tighter(infix:<+>) {
+        sub postfix:<!>(left, right) is tighter(infix:<+>) {
         }
         .
 
@@ -459,7 +459,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<!>(left, right) is tighter(prefix:<->) {
+        sub infix:<!>(left, right) is tighter(prefix:<->) {
         }
         .
 
@@ -468,7 +468,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:«!»(l, r) {
+        sub infix:«!»(l, r) {
             return "Mr. Bond";
         }
 
@@ -480,7 +480,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<\>>(l, r) {
+        sub infix:<\>>(l, r) {
             return "James";
         }
 
@@ -492,11 +492,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<‡>(x) is looser(prefix:<^>) {
+        sub postfix:<‡>(x) is looser(prefix:<^>) {
             return [];
         }
 
-        func prefix:<$>(x) {
+        sub prefix:<$>(x) {
             return x.size();
         }
 
@@ -508,16 +508,16 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func prefix:<&>(x) {
+        sub prefix:<&>(x) {
             return x ~ " prefix:<&>";
         }
 
-        func postfix:<‡>(x) is looser(prefix:<&>) {
+        sub postfix:<‡>(x) is looser(prefix:<&>) {
             return x ~ " postfix:<‡>";
         }
 
         {
-            func prefix:<$>(x) {
+            sub prefix:<$>(x) {
                 return x ~ " prefix:<$>";
             }
 
@@ -530,15 +530,15 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<&>(x) {
+        sub postfix:<&>(x) {
             return 1;
         }
 
-        func prefix:<&>(x) {
+        sub prefix:<&>(x) {
             return 2;
         }
 
-        func prefix:<@>(x) {
+        sub prefix:<@>(x) {
             return 3;
         }
 
@@ -554,7 +554,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:«->»(lhs, rhs) {
+        sub infix:«->»(lhs, rhs) {
             return "Bond";
         }
 
@@ -567,7 +567,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my infix:<?> = func (lhs, rhs) {
+        my infix:<?> = sub (lhs, rhs) {
             return "?";
         };
 
@@ -580,11 +580,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo(x, y, infix:<+>) {
+        sub foo(x, y, infix:<+>) {
             return x + y;
         }
 
-        say(foo(1, 2, func(l, r) { return l ~ r }));
+        say(foo(1, 2, sub(l, r) { return l ~ r }));
         .
 
     outputs $program, "12\n",
@@ -593,11 +593,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo(x, y, infix:<?>) {
+        sub foo(x, y, infix:<?>) {
             return x ? y;
         }
 
-        say(foo(1, 2, func(l, r) { return l ~ r }));
+        say(foo(1, 2, sub(l, r) { return l ~ r }));
         .
 
     outputs $program, "12\n",
@@ -606,7 +606,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my fns = [func(l, r) { return l ~ r }, func(l, r) { return l * r }];
+        my fns = [sub(l, r) { return l ~ r }, sub(l, r) { return l * r }];
 
         for fns -> infix:<op> {
             say(20 op 5);
@@ -619,7 +619,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        if func(l, r) { return l * r } -> infix:<op> {
+        if sub(l, r) { return l * r } -> infix:<op> {
             say(20 op 5);
         }
         .
@@ -633,7 +633,7 @@ use Yup::Test;
         my c = 5;
         my d = fn;
 
-        func fn(l, r) {
+        sub fn(l, r) {
             c = c - 1;
             if !c {
                 return nil;
@@ -653,7 +653,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<@->(a, b) is looser(infix:<+>) {
+        sub infix:<@->(a, b) is looser(infix:<+>) {
             if b == 0 {
                 return a;
             }
@@ -669,7 +669,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func postfix:<++>(x) {
+        sub postfix:<++>(x) {
             x + 1
         }
 
@@ -692,8 +692,8 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func infix:<+++>(lhs, rhs) {}
-        func postfix:<+++>(term) {}
+        sub infix:<+++>(lhs, rhs) {}
+        sub postfix:<+++>(term) {}
         .
 
     parse-error $program, X::Redeclaration, "can't declare an infix and a postfix with the same name";

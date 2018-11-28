@@ -4,39 +4,39 @@ use Yup;
 use Yup::Linter;
 
 {
-    my $program = 'func f() {}';
+    my $program = 'sub f() {}';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [L::SubNotUsed], "func not used";
+    ok @complaints ~~ [L::SubNotUsed], "sub not used";
 }
 
 {
-    my $program = 'func f() {}; f()';
+    my $program = 'sub f() {}; f()';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [], "func is used; no complaint";
+    ok @complaints ~~ [], "sub is used; no complaint";
 }
 
 {
-    my $program = 'func f() {}; say(f)';
+    my $program = 'sub f() {}; say(f)';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [], "func is used as argument; no complaint";
+    ok @complaints ~~ [], "sub is used as argument; no complaint";
 }
 
 {
-    my $program = '{ func f() {} }; func f() {}; f()';
+    my $program = '{ sub f() {} }; sub f() {}; f()';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [L::SubNotUsed], "outer func used, but not inner";
+    ok @complaints ~~ [L::SubNotUsed], "outer sub used, but not inner";
 }
 
 {
-    my $program = '{ func f() {}; f() }; func f() {}';
+    my $program = '{ sub f() {}; f() }; sub f() {}';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [L::SubNotUsed], "inner func used, but not outer";
+    ok @complaints ~~ [L::SubNotUsed], "inner sub used, but not outer";
 }
 
 {
-    my $program = 'func f() {}; for [1, 2, 3] { f() }';
+    my $program = 'sub f() {}; for [1, 2, 3] { f() }';
     my @complaints = Yup.linter.lint($program);
-    ok @complaints ~~ [], "using a func from a more nested scope than it was defined";
+    ok @complaints ~~ [], "using a sub from a more nested scope than it was defined";
 }
 
 done-testing;

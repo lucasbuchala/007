@@ -55,12 +55,12 @@ grammar Yup::Grammar {
         <EXPR>
     }
     token statement:block { <pblock> }
-    rule statement:func-or-macro {
-        [export\s+]?$<routine>=(func|macro)» [<identifier> || <.panic("identifier")>]
+    rule statement:sub-or-macro {
+        [export\s+]?$<routine>=(sub|macro)» [<identifier> || <.panic("identifier")>]
         :my $*in_routine = True;
         {
-            declare($<routine> eq "func"
-                        ?? Q::Statement::Func
+            declare($<routine> eq "sub"
+                        ?? Q::Statement::Sub
                         !! Q::Statement::Macro,
                     $<identifier>.ast.name.value);
         }
@@ -254,13 +254,13 @@ grammar Yup::Grammar {
     token term:identifier {
         <identifier>
     }
-    token term:func {
-        func <.ws> <identifier>?
+    token term:sub {
+        sub <.ws> <identifier>?
         :my $*in_routine = True;
         <.newpad>
         {
             if $<identifier> {
-                declare(Q::Term::Func, $<identifier>.ast.name.value);
+                declare(Q::Term::Sub, $<identifier>.ast.name.value);
             }
         }
         '(' ~ ')' <parameterlist>

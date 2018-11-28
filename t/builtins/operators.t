@@ -290,29 +290,29 @@ use Yup::Test;
 }
 
 {
-    outputs 'func foo() {}; say(foo == foo)', "true\n", "a func is equal to itself";
+    outputs 'sub foo() {}; say(foo == foo)', "true\n", "a sub is equal to itself";
     outputs 'macro foo() {}; say(foo == foo)', "true\n", "a macro is equal to itself";
-    outputs 'say(say == say)', "true\n", "a built-in func is equal to itself";
+    outputs 'say(say == say)', "true\n", "a built-in sub is equal to itself";
     outputs 'say(infix:<+> == infix:<+>)', "true\n", "a built-in operator is equal to itself";
     outputs 'say(new Q.Identifier { name: "foo" } == new Q.Identifier { name: "foo" })', "true\n",
         "two Qtrees with equal content are equal";
-    outputs 'my a = []; for [1, 2] { func fn() {}; a = [fn, a] }; say(a[1][0] == a[0])',
-        "false\n", "the same func from two different frames are different";
-    outputs 'func foo() {}; my x = foo; { func foo() {}; say(x == foo) }', "false\n",
+    outputs 'my a = []; for [1, 2] { sub fn() {}; a = [fn, a] }; say(a[1][0] == a[0])',
+        "false\n", "the same sub from two different frames are different";
+    outputs 'sub foo() {}; my x = foo; { sub foo() {}; say(x == foo) }', "false\n",
         "distinct funcs are unequal, even with the same name and bodies (I)";
-    outputs 'func foo() { say("OH HAI") }; my x = foo; { func foo() { say("OH HAI") }; say(x == foo) }',
+    outputs 'sub foo() { say("OH HAI") }; my x = foo; { sub foo() { say("OH HAI") }; say(x == foo) }',
         "false\n", "distinct funcs are unequal, even with the same name and bodies (II)";
 
-    outputs 'func foo() {}; func bar() {}; say(foo == bar)', "false\n",
+    outputs 'sub foo() {}; sub bar() {}; say(foo == bar)', "false\n",
         "distinct funcs are unequal";
     outputs 'macro foo() {}; macro bar() {}; say(foo == bar)', "false\n",
         "distinct macros are unequal";
     outputs 'say(say == type)', "false\n", "distinct built-in funcs are unequal";
     outputs 'say(infix:<+> == prefix:<->)', "false\n",
         "distinct built-in operators are unequal";
-    outputs 'func foo(y) {}; my x = foo; { func foo(x) {}; say(x == foo) }', "false\n",
+    outputs 'sub foo(y) {}; my x = foo; { sub foo(x) {}; say(x == foo) }', "false\n",
         "funcs with different parameters are unequal";
-    outputs 'func foo() {}; my x = foo; { func foo() { say("OH HAI") }; say(x == foo) }', "false\n",
+    outputs 'sub foo() {}; my x = foo; { sub foo() { say("OH HAI") }; say(x == foo) }', "false\n",
         "funcs with different bodies are unequal";
     outputs 'say(new Q.Identifier { name: "foo" } == new Q.Identifier { name: "bar" })', "false\n",
         "two Qtrees with distinct content are unequal";
@@ -404,7 +404,7 @@ use Yup::Test;
 {
     my $program = q:to/./;
         my a = [1, 2, 3];
-        func f() { return 7 };
+        sub f() { return 7 };
         my o = { foo: 12 };
 
         say(-a[1]);
@@ -594,7 +594,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             say("I never get run, you know");
         }
         say(007 // f());

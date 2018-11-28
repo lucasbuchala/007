@@ -5,7 +5,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func MAIN() {
+        sub MAIN() {
             say("Bond");
         }
         .
@@ -23,7 +23,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func MAIN(first, last) {
+        sub MAIN(first, last) {
             say(last, ", ", first, " ", last, ".");
         }
         .
@@ -45,7 +45,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func MAIN(x) {
+        sub MAIN(x) {
         }
         .
 
@@ -67,7 +67,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func MAIN(x, y, z) {
+        sub MAIN(x, y, z) {
         }
         .
 

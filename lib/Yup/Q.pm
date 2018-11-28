@@ -237,7 +237,7 @@ class Q::TraitList does Q {
     method attribute-order { <traits> }
 }
 
-class Q::Term::Func does Q::Term does Q::Declaration {
+class Q::Term::Sub does Q::Term does Q::Declaration {
     has $.identifier;
     has $.traitlist = Q::TraitList.new;
     has $.block;
@@ -248,7 +248,7 @@ class Q::Term::Func does Q::Term does Q::Declaration {
         my $name = $.identifier ~~ Val::Nil
             ?? Val::Str.new(:value(""))
             !! $.identifier.name;
-        return Val::Func.new(
+        return Val::Sub.new(
             :$name,
             :parameterlist($.block.parameterlist),
             :statementlist($.block.statementlist),
@@ -361,7 +361,7 @@ class Q::Postfix::Index is Q::Postfix {
                     if $index.value < 0;
                 return .elements[$index.value];
             }
-            when Val::Object | Val::Func | Q {
+            when Val::Object | Val::Sub | Q {
                 my $property = $.index.eval($runtime);
                 die X::Subscript::NonString.new
                     if $property !~~ Val::Str;
@@ -406,7 +406,7 @@ class Q::Postfix::Call is Q::Postfix {
         die "macro is called at runtime"
             if $c ~~ Val::Macro;
         die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
-            unless $c ~~ Val::Func;
+            unless $c ~~ Val::Sub;
         my @arguments = $.argumentlist.arguments.elements.map(*.eval($runtime));
         return $runtime.call($c, @arguments);
     }
@@ -665,7 +665,7 @@ class Q::Statement::Throw does Q::Statement {
     }
 }
 
-class Q::Statement::Func does Q::Statement does Q::Declaration {
+class Q::Statement::Sub does Q::Statement does Q::Declaration {
     has $.identifier;
     has $.traitlist = Q::TraitList.new;
     has Q::Block $.block;

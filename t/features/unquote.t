@@ -125,7 +125,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo(a, b, c) {
+        sub foo(a, b, c) {
             say(a);
             say(b);
             say(c);

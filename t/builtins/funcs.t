@@ -55,11 +55,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {}
+        sub f() {}
         say(type(f));
         .
 
-    outputs $program, "<type Func>\n", "Func type() works";
+    outputs $program, "<type Sub>\n", "Sub type() works";
 }
 
 {
@@ -67,7 +67,7 @@ use Yup::Test;
         say(type(say));
         .
 
-    outputs $program, "<type Func>\n", "builtin func type() returns the same as ordinary func";
+    outputs $program, "<type Sub>\n", "builtin sub type() returns the same as ordinary func";
 }
 
 {
@@ -76,7 +76,7 @@ use Yup::Test;
         say(say);
         .
 
-    outputs $program, "007\n<func say(...args)>\n", "builtin func say() has varargs";
+    outputs $program, "007\n<sub say(...args)>\n", "builtin sub say() has varargs";
 }
 
 {
@@ -105,12 +105,12 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo() {
+        sub foo() {
             exit();
             say("foo");
         }
 
-        func bar() {
+        sub bar() {
             foo();
             say("bar");
         }

@@ -4,7 +4,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        export func greet(name) {
+        export sub greet(name) {
             say("Good evening, Mr " ~ name);
         }
         greet("Bond");

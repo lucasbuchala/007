@@ -332,7 +332,7 @@ my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Val::Str.
         }
         my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
         my $statementlist = Q::StatementList.new();
-        .key => Val::Func.new-builtin(.value, .key, $parameterlist, $statementlist);
+        .key => Val::Sub.new-builtin(.value, .key, $parameterlist, $statementlist);
     }
     when .value ~~ Placeholder::MacroOp {
         my $name = .key;
@@ -340,7 +340,7 @@ my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Val::Str.
         my @elements = .value.qtype.attributes».name».substr(2).grep({ $_ ne "identifier" })».&parameter;
         my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
         my $statementlist = Q::StatementList.new();
-        .key => Val::Func.new-builtin(sub () {}, $name, $parameterlist, $statementlist);
+        .key => Val::Sub.new-builtin(sub () {}, $name, $parameterlist, $statementlist);
     }
     when .value ~~ Placeholder::Op {
         my $name = .key;
@@ -349,7 +349,7 @@ my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Val::Str.
         my @elements = &fn.signature.params».name».&ditch-sigil».&parameter;
         my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
         my $statementlist = Q::StatementList.new();
-        .key => Val::Func.new-builtin(&fn, $name, $parameterlist, $statementlist);
+        .key => Val::Sub.new-builtin(&fn, $name, $parameterlist, $statementlist);
     }
     default { die "Unknown type {.value.^name}" }
 });

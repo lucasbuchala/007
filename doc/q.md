@@ -128,7 +128,7 @@ identifier and an expression.
 
 A list of zero or more traits. Each routine has a traitlist.
 
-### Q::Term::Func
+### Q::Term::Sub
 
 A subroutine.
 
@@ -266,7 +266,7 @@ A `return` statement.
 
 A `throw` statement.
 
-### Q::Statement::Func
+### Q::Statement::Sub
 
 A subroutine declaration statement.
 

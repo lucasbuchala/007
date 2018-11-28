@@ -38,7 +38,7 @@ multi equal-value(Val::Object $l, Val::Object $r) {
 multi equal-value(Val::Type $l, Val::Type $r) {
     $l.type === $r.type
 }
-multi equal-value(Val::Func $l, Val::Func $r) {
+multi equal-value(Val::Sub $l, Val::Sub $r) {
     $l === $r
 }
 multi equal-value(Q $l, Q $r) {

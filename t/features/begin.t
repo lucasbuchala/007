@@ -87,7 +87,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             my k;
             BEGIN {
                 k = 2;
@@ -175,7 +175,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo() {
+        sub foo() {
             say(7);
         }
 
@@ -185,7 +185,7 @@ use Yup::Test;
     outputs
         $program,
         "7\n",
-        "calling a func at BEGIN time works";
+        "calling a sub at BEGIN time works";
 }
 
 done-testing;

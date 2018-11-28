@@ -4,11 +4,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func A(k, x1, x2, x3, x4, x5) {
+        sub A(k, x1, x2, x3, x4, x5) {
             if k <= 0 {
                 return x4() + x5();
             } else {
-                func B() {
+                sub B() {
                     k = k - 1;
                     return A(k, B, x1, x2, x3, x4);
                 }
@@ -16,11 +16,11 @@ use Yup::Test;
             }
         }
 
-        func x1() { return  1 }
-        func x2() { return -1 }
-        func x3() { return -1 }
-        func x4() { return  1 }
-        func x5() { return  0 }
+        sub x1() { return  1 }
+        sub x2() { return -1 }
+        sub x3() { return -1 }
+        sub x4() { return  1 }
+        sub x5() { return  0 }
 
         say(A(10, x1, x2, x3, x4, x5))
         .

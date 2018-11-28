@@ -4,7 +4,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             return 7;
         }
 
@@ -16,7 +16,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             return "Bond. James Bond.";
         }
 
@@ -28,7 +28,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             return [1, 2, "three"];
         }
 
@@ -40,7 +40,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             return 1953;
             say("Dead code. Should have returned by now");
         }
@@ -53,7 +53,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             return;
         }
 
@@ -65,7 +65,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {
+        sub f() {
             7;
         }
 

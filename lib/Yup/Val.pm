@@ -235,7 +235,7 @@ class Val::Type does Val {
     }
 }
 
-class Val::Func is Val {
+class Val::Sub is Val {
     has Val::Str $.name;
     has &.hook = Callable;
     has $.parameterlist;
@@ -267,10 +267,10 @@ class Val::Func is Val {
         sprintf "(%s)", $.parameterlist.parameters.elements».identifier».name.join(", ");
     }
 
-    method Str { "<func {$.escaped-name}{$.pretty-parameters}>" }
+    method Str { "<sub {$.escaped-name}{$.pretty-parameters}>" }
 }
 
-class Val::Macro is Val::Func {
+class Val::Macro is Val::Sub {
     method Str { "<macro {$.escaped-name}{$.pretty-parameters}>" }
 }
 
@@ -290,7 +290,7 @@ class Helper {
         when Val::Object { .quoted-Str }
         when Val::Type { "<type {.name}>" }
         when Val::Macro { "<macro {.escaped-name}{.pretty-parameters}>" }
-        when Val::Func { "<sub {.escaped-name}{.pretty-parameters}>" }
+        when Val::Sub { "<sub {.escaped-name}{.pretty-parameters}>" }
         when Val::Exception { "Exception \{message: {.message.quoted-Str}\}" }
         default {
             my $self = $_;

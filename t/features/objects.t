@@ -10,8 +10,8 @@ use Yup::Test;
     outputs 'say({ a: 1 })', qq[\{a: 1\}\n], "unquoted key, literal value";
     outputs 'say({a: 1})', qq[\{a: 1\}\n], "no space before and after";
     outputs 'say({a: 1 + 2})', qq[\{a: 3\}\n], "unquoted key, computed value";
-    outputs 'say({a() {}})', qq[\{a: <func a()>\}\n], "object method shorthand";
-    outputs 'say({a(a, b) {}})', qq[\{a: <func a(a, b)>\}\n], "object method shorthand with parameters";
+    outputs 'say({a() {}})', qq[\{a: <sub a()>\}\n], "object method shorthand";
+    outputs 'say({a(a, b) {}})', qq[\{a: <sub a(a, b)>\}\n], "object method shorthand with parameters";
 }
 
 {
@@ -194,7 +194,7 @@ use Yup::Test;
     my $program = q:to/./;
         f();
         my o = { say };
-        func f() { say("Mr. Bond") }
+        sub f() { say("Mr. Bond") }
         .
 
     outputs

@@ -1,5 +1,5 @@
-func verse(n) {
-    func plural(n, thing) {
+sub verse(n) {
+    sub plural(n, thing) {
         if n == 1 {
             return n ~ " " ~ thing;
         }

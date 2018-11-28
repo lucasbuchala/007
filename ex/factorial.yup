@@ -1,4 +1,4 @@
-func postfix:<!>(N) {
+sub postfix:<!>(N) {
     my product = 1;
     my n = 2;
     while n <= N {

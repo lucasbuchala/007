@@ -1,4 +1,4 @@
-func gcd(a, b) {
+sub gcd(a, b) {
     if b {
         return gcd(b, a % b);
     }

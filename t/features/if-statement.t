@@ -11,7 +11,7 @@ use Yup::Test;
         if "James" { say("truthy str") }
         if [] { say("falsy array") }
         if [""] { say("truthy array") }
-        func foo() {}
+        sub foo() {}
         if foo { say("truthy sub") }
         macro moo() {}
         if moo { say("truthy macro") }

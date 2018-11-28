@@ -1,4 +1,4 @@
-func infix:<**>(x, n) is tighter(infix:<*>) is assoc("right") {
+sub infix:<**>(x, n) is tighter(infix:<*>) is assoc("right") {
     if n == 0 {
         return 1;
     }

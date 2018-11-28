@@ -38,7 +38,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my q = new Q.Statement.Func {
+        my q = new Q.Statement.Sub {
             identifier: new Q.Identifier { name: "foo" },
             block: new Q.Block {
                 parameterlist: new Q.ParameterList { parameters: [] },

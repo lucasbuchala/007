@@ -47,7 +47,7 @@ use Yup::Test;
 {
     my $program = q:to/./;
         macro moo() {
-            func infix:<**>(l, r) {
+            sub infix:<**>(l, r) {
                 return l ~ " to the " ~ r;
             }
             return quasi {
@@ -71,7 +71,7 @@ use Yup::Test;
         }
 
         {
-            func infix:<+>(l, r) { return "lol, pwnd!" }
+            sub infix:<+>(l, r) { return "lol, pwnd!" }
             gah()
         }
         .
@@ -342,7 +342,7 @@ use Yup::Test;
             }
         };
 
-        func ignore(x) {}
+        sub ignore(x) {}
 
         ignore(moo());
         .
@@ -414,14 +414,14 @@ use Yup::Test;
     my $program = q:to/./;
         macro moo(x) {
             return quasi {
-                (func() { my y = {{{x}}} })()
+                (sub() { my y = {{{x}}} })()
             }
         }
 
         say(moo(42));
         .
 
-    outputs $program, "42\n", "a declaration works in a func term in an injectile";
+    outputs $program, "42\n", "a declaration works in a sub term in an injectile";
 }
 
 done-testing;

@@ -104,7 +104,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(X, Y, X) {
+        sub f(X, Y, X) {
             say(X ~ Y);
         }
         .
@@ -135,7 +135,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func foo(x) {
+        sub foo(x) {
             my x;
         }
         .
@@ -180,11 +180,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {}
+        sub f() {}
         my f;
         .
 
-    parse-error $program, X::Redeclaration, "can't have a func and a variable sharing a name";
+    parse-error $program, X::Redeclaration, "can't have a sub and a variable sharing a name";
 }
 
 {
@@ -192,7 +192,7 @@ use Yup::Test;
         my f;
         {
             f = 3;
-            func f() {
+            sub f() {
             }
         }
         .
@@ -223,7 +223,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func !() {}
+        sub !() {}
         .
 
     parse-error $program, X::Syntax::Missing, "must have a valid identifier after `sub`";
@@ -278,11 +278,11 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func j(t) { for t -> x {} }
+        sub j(t) { for t -> x {} }
         my t;
         .
 
-    outputs $program, "", "a var outside a func does not collide with a param inside used in a for loop";
+    outputs $program, "", "a var outside a sub does not collide with a param inside used in a for loop";
 }
 
 done-testing;

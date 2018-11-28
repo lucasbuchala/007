@@ -11,7 +11,7 @@ It is the value variables have that haven't been assigned to:
 It is also the value returned from a subroutine that didn't explicitly
 return a value:
 
-    func noreturn() {
+    sub noreturn() {
     }
     say(noreturn());    # --> `nil`
 
@@ -47,7 +47,7 @@ In 007 as in many other dynamic languages, it's not necessary to use
 or `while` loops. *Any* value can be used, and there's always a way
 for each type to convert any of its values to a boolean value:
 
-    func check(value) {
+    sub check(value) {
         if value {
             say("truthy");
         }
@@ -200,8 +200,8 @@ each element through a function, or by filtering each element
 through a predicate function:
 
     my numbers = [1, 2, 3, 4, 5];
-    say(numbers.map(func (e) { return e * 2 }));     # --> `[2, 4, 6, 8, 10]`
-    say(numbers.filter(func (e) { return e %% 2 })); # --> `[2, 4]`
+    say(numbers.map(sub (e) { return e * 2 }));     # --> `[2, 4, 6, 8, 10]`
+    say(numbers.filter(sub (e) { return e %% 2 })); # --> `[2, 4]`
 
 ### Tuple
 
@@ -234,8 +234,8 @@ each element through a function, or by filtering each element
 through a predicate function:
 
     my numbers = (1, 2, 3, 4, 5);
-    say(numbers.map(func (e) { return e * 2 }));     # --> `(2, 4, 6, 8, 10)`
-    say(numbers.filter(func (e) { return e %% 2 })); # --> `(2, 4)`
+    say(numbers.map(sub (e) { return e * 2 }));     # --> `(2, 4, 6, 8, 10)`
+    say(numbers.filter(sub (e) { return e %% 2 })); # --> `(2, 4)`
 
 ### Object
 
@@ -254,7 +254,7 @@ syntax:
     say(o1 == o3);              # --> `true`
 
     my o4 = {
-        greet: func () {
+        greet: sub () {
             return "hi!";
         }
     };
@@ -371,20 +371,20 @@ consider using infix:<==> on the respective type objects instead:
     say(type(q) == Q.Literal.Str);      # --> `true`
     say(type(q) == Q.Literal);          # --> `false`
 
-### Func
+### Sub
 
 A function. When you define a function in 007, the value of the
-name bound is a `Func` object.
+name bound is a `Sub` object.
 
-    func agent() {
+    sub agent() {
         return "Bond";
     }
-    say(agent);             # --> `<func agent()>`
+    say(agent);             # --> `<sub agent()>`
 
 Subroutines are mostly distinguished by being *callable*, that is, they
 can be called at runtime by passing some values into them.
 
-    func add(x, y) {
+    sub add(x, y) {
         return x + y;
     }
     say(add(2, 5));         # --> `7`

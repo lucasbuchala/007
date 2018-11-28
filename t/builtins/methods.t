@@ -182,7 +182,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(n) { n == 2 }
+        sub f(n) { n == 2 }
         say([1, 2, 3, 2].filter(f));
         .
 
@@ -191,7 +191,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(n) { n + 1 }
+        sub f(n) { n + 1 }
         my a = [1, 2, 3];
         say(a.map(f));
         say(a);

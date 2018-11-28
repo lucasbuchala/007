@@ -51,7 +51,7 @@ class Yup::Runtime {
 
     method handle-main() {
         if self.maybe-get-var("MAIN") -> $main {
-            if $main ~~ Val::Func {
+            if $main ~~ Val::Sub {
                 self.call($main, @!arguments.map(-> $value {
                     Val::Str.new(:$value)
                 }));
@@ -85,13 +85,13 @@ class Yup::Runtime {
             self.declare-var($identifier, $value);
         }
         for $statementlist.statements.elements.kv -> $i, $_ {
-            when Q::Statement::Func {
+            when Q::Statement::Sub {
                 my $name = .identifier.name;
                 my $parameterlist = .block.parameterlist;
                 my $statementlist = .block.statementlist;
                 my $static-lexpad = .block.static-lexpad;
                 my $outer-frame = $frame;
-                my $val = Val::Func.new(
+                my $val = Val::Sub.new(
                     :$name,
                     :$parameterlist,
                     :$statementlist,
@@ -191,7 +191,7 @@ class Yup::Runtime {
         self.leave;
     }
 
-    method call(Val::Func $c, @arguments) {
+    method call(Val::Sub $c, @arguments) {
         if $c === $!say-builtin {
             for @arguments -> $argument {
                 $.output.print($argument.Str);
@@ -244,7 +244,7 @@ class Yup::Runtime {
             my @elements = &fn.signature.params».name».&ditch-sigil».&parameter;
             my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
             my $statementlist = Q::StatementList.new();
-            return Val::Func.new-builtin(&fn, $name, $parameterlist, $statementlist);
+            return Val::Sub.new-builtin(&fn, $name, $parameterlist, $statementlist);
         }
 
         my $type = Val::Type.of($obj.WHAT).name;
@@ -494,7 +494,7 @@ class Yup::Runtime {
                 $obj.create($properties.elements.map({ .elements[0].value => .elements[1] }));
             });
         }
-        elsif $obj ~~ Val::Func && $propname eq any <outer-frame static-lexpad parameterlist statementlist> {
+        elsif $obj ~~ Val::Sub && $propname eq any <outer-frame static-lexpad parameterlist statementlist> {
             return $obj."$propname"();
         }
         elsif $obj ~~ (Q | Val::Object) && ($obj.properties{$propname} :exists) {
@@ -640,8 +640,8 @@ class Yup::Runtime {
         elsif $obj ~~ Val::Type && $obj.type === Q::Postfix && $propname eq "Property" {
             return Val::Type.of(Q::Postfix::Property);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "Func" {
-            return Val::Type.of(Q::Statement::Func);
+        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "Sub" {
+            return Val::Type.of(Q::Statement::Sub);
         }
         elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "If" {
             return Val::Type.of(Q::Statement::If);

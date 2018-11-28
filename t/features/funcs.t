@@ -4,7 +4,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() { say("OH HAI from inside sub") }
+        sub f() { say("OH HAI from inside sub") }
         .
 
     outputs $program, "", "subs are not immediate";
@@ -14,7 +14,7 @@ use Yup::Test;
     my $program = q:to/./;
         my x = "one";
         say(x);
-        func f() {
+        sub f() {
             my x = "two";
             say(x);
         }
@@ -27,18 +27,18 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(name) {
+        sub f(name) {
             say("Good evening, Mr " ~ name);
         }
         f("Bond");
         .
 
-    outputs $program, "Good evening, Mr Bond\n", "calling a func with parameters works";
+    outputs $program, "Good evening, Mr Bond\n", "calling a sub with parameters works";
 }
 
 {
     my $program = q:to/./;
-        func f(x, y) {
+        sub f(x, y) {
             say(x ~ y);
         }
         my y = "y";
@@ -50,12 +50,12 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(callback) {
+        sub f(callback) {
             my scoping = "dynamic";
             callback();
         }
         my scoping = "lexical";
-        f(func() { say(scoping) });
+        f(sub() { say(scoping) });
         .
 
     outputs $program, "lexical\n", "scoping is lexical";
@@ -64,30 +64,30 @@ use Yup::Test;
 {
     my $program = q:to/./;
         f();
-        func f() {
+        sub f() {
             say("OH HAI from inside sub");
         }
         .
 
-    outputs $program, "OH HAI from inside sub\n", "call a func before declaring it";
+    outputs $program, "OH HAI from inside sub\n", "call a sub before declaring it";
 }
 
 {
     my $program = q:to/./;
         f();
         my x = "X";
-        func f() {
+        sub f() {
             say(x);
         }
         .
 
-    outputs $program, "nil\n", "using an outer lexical in a func that's called before the outer lexical's declaration";
+    outputs $program, "nil\n", "using an outer lexical in a sub that's called before the outer lexical's declaration";
 }
 
 {
     my $program = q:to/./;
-        func f() { say("OH HAI") }
-        func g() { return f };
+        sub f() { say("OH HAI") }
+        sub g() { return f };
         g()();
         .
 
@@ -96,20 +96,20 @@ use Yup::Test;
 }
 
 {
-    my $program = 'f("Bond"); func f(name) { say("Good evening, Mr " ~ name) }';
+    my $program = 'f("Bond"); sub f(name) { say("Good evening, Mr " ~ name) }';
 
-    outputs $program, "Good evening, Mr Bond\n", "calling a post-declared func works";
+    outputs $program, "Good evening, Mr Bond\n", "calling a post-declared sub works";
 }
 
 {
-    my $program = 'my b = 42; func g() { say(b) }; g()';
+    my $program = 'my b = 42; sub g() { say(b) }; g()';
 
     outputs $program, "42\n", "lexical scope works correctly from inside a sub";
 }
 
 {
     my $program = q:to/./;
-        func f() {}
+        sub f() {}
         f = 5;
         .
 
@@ -121,8 +121,8 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f() {}
-        func h(a, b, f) {
+        sub f() {}
+        sub h(a, b, f) {
             f = 17;
             say(f == 17);
         }
@@ -137,7 +137,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my f = func (x) { say(x) };
+        my f = sub (x) { say(x) };
         f("Mr Bond");
         .
 
@@ -148,7 +148,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my f = func g(x) { say(x) };
+        my f = sub g(x) { say(x) };
         f("Mr Bond");
         .
 
@@ -159,29 +159,29 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my f = func g(x) {};
+        my f = sub g(x) {};
         say(f);
         .
 
     outputs $program,
-        "<func g(x)>\n",
+        "<sub g(x)>\n",
         "...and they know their own name";
 }
 
 {
     my $program = q:to/./;
-        my f = func g() { say(g) };
+        my f = sub g() { say(g) };
         f();
         .
 
     outputs $program,
-        "<func g()>\n",
-        "the name of a func is visible inside the sub...";
+        "<sub g()>\n",
+        "the name of a sub is visible inside the sub...";
 }
 
 {
     my $program = q:to/./;
-        my f = func g() {};
+        my f = sub g() {};
         g();
         .
 
@@ -192,7 +192,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        my f = func () {
+        my f = sub () {
             my c = "Goldfinger";
             say(c);
         };
@@ -207,8 +207,8 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(x,) { }
-        func g(x,y,) { }
+        sub f(x,) { }
+        sub g(x,y,) { }
         .
 
     outputs $program, "", "trailing commas are allowed in parameterlist";
@@ -216,8 +216,8 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func f(x)   { say(1) }
-        func g(x,y) { say(2) }
+        sub f(x)   { say(1) }
+        sub g(x,y) { say(2) }
         f(4,);
         g(4,5,);
         .
@@ -226,14 +226,14 @@ use Yup::Test;
 }
 
 {
-    my $program = 'func subtract(x) { say(x) }; subtract("Mr Bond")';
+    my $program = 'sub subtract(x) { say(x) }; subtract("Mr Bond")';
 
-    outputs $program, "Mr Bond\n", "it's OK to call your func 'subtract'";
+    outputs $program, "Mr Bond\n", "it's OK to call your sub 'subtract'";
 }
 
 {
     my $program = q:to/./;
-        func fn()
+        sub fn()
         .
 
     my subset missing-block of X::Syntax::Missing where {
@@ -248,7 +248,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func b(count) {
+        sub b(count) {
             if count {
                 b(count - 1);
                 say(count);
@@ -257,15 +257,15 @@ use Yup::Test;
         b(4);
         .
 
-    outputs $program, "1\n2\n3\n4\n", "each func invocation gets its own callframe/scope";
+    outputs $program, "1\n2\n3\n4\n", "each sub invocation gets its own callframe/scope";
 }
 
 {
     my $program = q:to/./;
-        say(func () {});
+        say(sub () {});
         .
 
-    outputs $program, "<func ()>\n", "an anonymous func stringifies without a name";
+    outputs $program, "<sub ()>\n", "an anonymous sub stringifies without a name";
 }
 
 done-testing;

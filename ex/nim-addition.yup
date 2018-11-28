@@ -1,4 +1,4 @@
-func padLeft(string, length, char) {
+sub padLeft(string, length, char) {
     if string.chars() < length {
         return padLeft(char ~ string, length, char);
     }
@@ -7,7 +7,7 @@ func padLeft(string, length, char) {
     }
 }
 
-func binfmt(number) {
+sub binfmt(number) {
     my result = "";
     while number {
         my qr = number divmod 2;
@@ -22,7 +22,7 @@ func binfmt(number) {
     return result || "0";
 }
 
-func infix:<⊕>(lhs, rhs) is equiv(infix:<+>) {
+sub infix:<⊕>(lhs, rhs) is equiv(infix:<+>) {
     my lb = binfmt(lhs);
     my rb = binfmt(rhs);
     lb = padLeft(lb, rb.chars(), "0");

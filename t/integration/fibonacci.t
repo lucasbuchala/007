@@ -4,7 +4,7 @@ use Yup::Test;
 
 {
     my $program = q:to/./;
-        func fib(n) {
+        sub fib(n) {
             if n == 0 {
                 return 1;
             }
