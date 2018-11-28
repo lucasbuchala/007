@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 {
     outputs 'say({})', qq[\{\}\n], "empty object";

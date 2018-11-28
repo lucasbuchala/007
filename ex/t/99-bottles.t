@@ -1,7 +1,7 @@
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-my @lines = run-and-collect-lines("ex/99-bottles.yu");
+my @lines = run-and-collect-lines("ex/99-bottles.yup");
 
 is +@lines, 4 * 99 + 98, "correct number of lines";
 

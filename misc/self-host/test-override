@@ -1,5 +1,5 @@
-use Yu;
-use Yu::Test <&read &check &ensure-feature-flag>;
+use Yup;
+use Yup::Test <&read &check &ensure-feature-flag>;
 
 my class StrOutput {
     has $.result = "";
@@ -12,9 +12,9 @@ sub is-result($input, $expected, $desc) {
     my $compunit = read($input);
     my $runtime-program = slurp("self-host/runtime.007");
     my $output = StrOutput.new;
-    my $runtime = Yu.runtime(:$output);
+    my $runtime = Yup.runtime(:$output);
     check($compunit, $runtime);
-    my $ast = Yu.parser(:$runtime).parse($runtime-program);
+    my $ast = Yup.parser(:$runtime).parse($runtime-program);
     $ast.block.static-lexpad.properties<ast> = $compunit;
     $runtime.run($ast);
 
@@ -23,11 +23,11 @@ sub is-result($input, $expected, $desc) {
 
 sub outputs($program, $expected, $desc) {
     my $output = StrOutput.new;
-    my $runtime = Yu.runtime(:$output);
-    my $parser = Yu.parser(:$runtime);
+    my $runtime = Yup.runtime(:$output);
+    my $parser = Yup.parser(:$runtime);
     my $compunit = $parser.parse($program);
     my $runtime-program = slurp("self-host/runtime.007");
-    my $ast = Yu.parser(:$runtime).parse($runtime-program);
+    my $ast = Yup.parser(:$runtime).parse($runtime-program);
     $ast.block.static-lexpad.properties<ast> = $compunit;
     $runtime.run($ast);
 

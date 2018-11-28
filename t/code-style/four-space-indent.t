@@ -1,9 +1,9 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 my @lines-with-unorthodox-indent;
-for find("lib/", /[".pm" | ".yu"] $/) -> $file {
+for find("lib/", /[".pm" | ".yup"] $/) -> $file {
     for $file.IO.lines.kv -> $i, $line {
         next unless $line ~~ /^ \h+/;
 

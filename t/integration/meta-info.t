@@ -1,10 +1,10 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 my @lib-pms = find("lib", / ".pm" $/)».Str;
 
-my @meta-info-pms = "META6.json".IO.lines.map({ ~$0 if /\" \h* \: \h* \" (lib\/Yu<-["]>+)/ });
+my @meta-info-pms = "META6.json".IO.lines.map({ ~$0 if /\" \h* \: \h* \" (lib\/Yup<-["]>+)/ });
 
 {
     my $missing-meta-info-lines = (@lib-pms (-) @meta-info-pms).keys.map({ "- $_" }).join("\n");

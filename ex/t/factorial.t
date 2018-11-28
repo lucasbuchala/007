@@ -1,7 +1,7 @@
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-my @lines = run-and-collect-lines("ex/factorial.yu");
+my @lines = run-and-collect-lines("ex/factorial.yup");
 
 is +@lines, 4, "correct number of lines of output";
 is @lines[0], "1", "line #1 correct";

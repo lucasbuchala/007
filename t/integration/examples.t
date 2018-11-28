@@ -1,10 +1,10 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-my @examples = find("ex", / ".yu" $/).map(-> $file { $file.basename.subst(/ ".yu" $/, "", :g) });
+my @examples = find("ex", / ".yup" $/).map(-> $file { $file.basename.subst(/ ".yup" $/, "", :g) });
 
-my @example-tests = find("t/examples", / ".t" $/).map(-> $file { $file.basename.subst(/ ".t" $/, "", :g) });
+my @example-tests = find("ex/t", / ".t" $/).map(-> $file { $file.basename.subst(/ ".t" $/, "", :g) });
 
 {
     my $missing-example-tests = (@examples (-) @example-tests).keys.map({ "- $_" }).join("\n");

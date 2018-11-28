@@ -1,7 +1,7 @@
-use Yu::Val;
-use Yu::Q;
-use Yu::Builtins;
-use Yu::Equal;
+use Yup::Val;
+use Yup::Q;
+use Yup::Builtins;
+use Yup::Equal;
 
 constant NO_OUTER = Val::Object.new;
 constant RETURN_TO = Q::Identifier.new(
@@ -9,7 +9,7 @@ constant RETURN_TO = Q::Identifier.new(
     :frame(NIL));
 constant EXIT_SUCCESS = 0;
 
-class Yu::Runtime {
+class Yup::Runtime {
     has $.input;
     has $.output;
     has @.arguments;

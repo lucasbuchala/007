@@ -1,5 +1,5 @@
-use Yu::Val;
-use Yu::Q;
+use Yup::Val;
+use Yup::Q;
 
 my %builtins =
     "say" => q:to '----',
@@ -9,7 +9,7 @@ my %builtins =
         ----
 ;
 
-class Yu::Backend::Perl5 {
+class Yup::Backend::Perl5 {
     method emit(Q::CompUnit $compunit) {
         return ""
             unless $compunit.block.statementlist.statements.elements;

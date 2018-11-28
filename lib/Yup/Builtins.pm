@@ -1,7 +1,7 @@
-use Yu::Val;
-use Yu::Q;
-use Yu::OpScope;
-use Yu::Equal;
+use Yup::Val;
+use Yup::Q;
+use Yup::OpScope;
+use Yup::Equal;
 
 class X::Control::Exit is Exception {
     has Int $.exit-code;
@@ -305,7 +305,7 @@ for Val::.keys.map({ "Val::" ~ $_ }) -> $name {
 }
 push @builtins, "Q" => Val::Type.of(Q);
 
-my $opscope = Yu::OpScope.new();
+my $opscope = Yup::OpScope.new();
 
 sub install-op($name, $placeholder) {
     $name ~~ /^ (prefix | infix | postfix) ':' (.+) $/

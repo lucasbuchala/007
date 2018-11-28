@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 my $files = find(".", /[".pm" | ".t"] $/)\
     .grep({ $_ !~~ / "no-commented-out-debug-code.t" / })\

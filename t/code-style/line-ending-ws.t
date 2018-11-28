@@ -1,9 +1,9 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 my @lines-ending-with-ws;
-for find(".", /[".pm" | ".yu"] $/) -> $file {
+for find(".", /[".pm" | ".yup"] $/) -> $file {
     for $file.IO.lines.kv -> $i, $line {
         if $line ~~ /\h $/ {
             push @lines-ending-with-ws,

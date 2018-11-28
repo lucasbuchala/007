@@ -1,5 +1,5 @@
-use Yu::Val;
-use Yu::Q;
+use Yup::Val;
+use Yup::Q;
 
 # These multis are used below by infix:<==> and infix:<!=>
 multi equal-value($, $) is export { False }

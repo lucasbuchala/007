@@ -1,12 +1,12 @@
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-constant MODIFIED_FORMAT_007_FILENAME = "format-$*PID.yu";
+constant MODIFIED_FORMAT_007_FILENAME = "format-$*PID.yup";
 LEAVE unlink MODIFIED_FORMAT_007_FILENAME;
 my $changed-line = False;
 
 given open(MODIFIED_FORMAT_007_FILENAME, :w) -> $fh {
-    for "ex/format.yu".IO.lines -> $line {
+    for "ex/format.yup".IO.lines -> $line {
         if $line ~~ /^^ '# ' (.+) $$/ {
             $changed-line = True;
             $fh.say: ~$0;
@@ -18,10 +18,10 @@ given open(MODIFIED_FORMAT_007_FILENAME, :w) -> $fh {
     $fh.close;
 }
 
-ok $changed-line, "found a line to un-comment from format.yu";
+ok $changed-line, "found a line to un-comment from format.yup";
 
 {
-    my @lines = run-and-collect-lines("ex/format.yu");
+    my @lines = run-and-collect-lines("ex/format.yup");
 
     is +@lines, 2, "correct number of lines";
 

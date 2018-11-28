@@ -1,11 +1,11 @@
 #! /bin/sh
 
 rlwrap perl6 -e '
-    use Yu;
-    my $runtime = Yu.runtime;
+    use Yup;
+    my $runtime = Yup.runtime;
 
     while defined my $program = prompt "> " {
-        my $ast = Yu.parser(:$runtime).parse($program);
+        my $ast = Yup.parser(:$runtime).parse($program);
         $runtime.run($ast);
         CATCH {
             default {

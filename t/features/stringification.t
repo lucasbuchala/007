@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use Yu::Test;
+use Yup::Test;
 
 {
     outputs 'func foo() {}; say(foo)', "<func foo()>\n", "zero-param sub";

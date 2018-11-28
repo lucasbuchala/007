@@ -1,7 +1,7 @@
 use v6;
 use Test;
-use Yu;
-use Yu::Test;
+use Yup;
+use Yup::Test;
 
 {
     my $program = q:to/./;
@@ -35,8 +35,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = Yu.runtime(:$output, :arguments("James", "Bond"));
-    my $parser = Yu.parser(:$runtime);
+    my $runtime = Yup.runtime(:$output, :arguments("James", "Bond"));
+    my $parser = Yup.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -56,8 +56,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = Yu.runtime(:$output, :arguments(["one", "two"]));
-    my $parser = Yu.parser(:$runtime);
+    my $runtime = Yup.runtime(:$output, :arguments(["one", "two"]));
+    my $parser = Yup.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 
@@ -78,8 +78,8 @@ use Yu::Test;
         method print($s) { $!result ~= $s.gist }
     }.new;
 
-    my $runtime = Yu.runtime(:$output, :arguments(["один"]));
-    my $parser = Yu.parser(:$runtime);
+    my $runtime = Yup.runtime(:$output, :arguments(["один"]));
+    my $parser = Yup.parser(:$runtime);
     my $ast = $parser.parse($program);
     $runtime.run($ast);
 

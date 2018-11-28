@@ -1,10 +1,10 @@
-use Yu;
+use Yup;
 
 sub run_007_on_007($program) {
-    my $compunit = Yu.parser.parse($program);
+    my $compunit = Yup.parser.parse($program);
     my $runtime-program = slurp("self-host/runtime.007");
-    my $runtime = Yu.runtime;
-    my $ast = Yu.parser(:$runtime).parse($runtime-program);
+    my $runtime = Yup.runtime;
+    my $ast = Yup.parser(:$runtime).parse($runtime-program);
     $ast.block.static-lexpad.properties<ast> = $compunit;
     $runtime.run($ast);
 }

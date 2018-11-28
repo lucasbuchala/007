@@ -1,5 +1,5 @@
-use Yu::Val;
-use Yu::Q;
+use Yup::Val;
+use Yup::Q;
 
 role Lint {
     method message { ... }
@@ -35,7 +35,7 @@ class X::AssertionFailure is Exception {
     method new($message) { self.bless(:$message) }
 }
 
-class Yu::Linter {
+class Yup::Linter {
     has $.parser;
 
     method lint($program) {

@@ -1,7 +1,7 @@
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-my @lines = run-and-collect-lines("ex/fizzbuzz.yu");
+my @lines = run-and-collect-lines("ex/fizzbuzz.yup");
 
 is +@lines, 100, "correct number of lines";
 

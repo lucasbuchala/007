@@ -1,7 +1,7 @@
-use Yu::Parser::Grammar;
-use Yu::Parser::Actions;
+use Yup::Grammar;
+use Yup::Actions;
 
-class Yu::Parser {
+class Yup::Parser {
     has $.runtime = die "Must supply a runtime";
     has @!opscopes = $!runtime.builtin-opscope;
     has @!checks;
@@ -19,7 +19,7 @@ class Yu::Parser {
         my $*parser = self;
         my $*runtime = $!runtime;
         @!checks = ();
-        Yu::Parser::Grammar.parse($program, :actions(Yu::Parser::Actions))
+        Yup::Grammar.parse($program, :actions(Yup::Actions))
             or die "Could not parse program";   # XXX: make this into X::
         for @!checks -> &check {
             &check();

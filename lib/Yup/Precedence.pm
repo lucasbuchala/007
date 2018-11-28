@@ -1,4 +1,4 @@
-class Yu::Precedence {
+class Yup::Precedence {
     has Str $.assoc;
     has %.ops;
 

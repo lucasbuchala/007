@@ -1,5 +1,5 @@
 use Test;
-use Yu;
+use Yup;
 
 my class StrOutput {
     has $.result = "";
@@ -9,11 +9,11 @@ my class StrOutput {
 }
 
 sub run_007_on_007($program) {
-    my $compunit = Yu.parser.parse($program);
-    my $runtime-program = slurp("misc/self-host/runtime.yu");
+    my $compunit = Yup.parser.parse($program);
+    my $runtime-program = slurp("misc/self-host/runtime.yup");
     my $output = StrOutput.new;
-    my $runtime = Yu.runtime(:$output);
-    my $ast = Yu.parser(:$runtime).parse($runtime-program);
+    my $runtime = Yup.runtime(:$output);
+    my $ast = Yup.parser(:$runtime).parse($runtime-program);
     $ast.block.static-lexpad.properties<ast> = $compunit;
     $runtime.run($ast);
     return $output.result;

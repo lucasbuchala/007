@@ -1,7 +1,7 @@
 use Test;
-use Yu;
+use Yup;
 
-my $parser = Yu.parser;
+my $parser = Yup.parser;
 
 {
     my $program = 'quasi { if {{{0}}} {} }';

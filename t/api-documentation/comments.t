@@ -12,7 +12,7 @@ for «'doc/val.md' 'doc/q.md'» -> $file {
     }
 }
 
-for <lib/Yu/Val.pm lib/Yu/Q.pm> -> $file {
+for <lib/Yup/Val.pm lib/Yup/Q.pm> -> $file {
     # I am a state machine. Hello.
     # my enum State <Normal ApiComment>;
     # my $state = Normal;

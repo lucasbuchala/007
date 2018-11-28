@@ -1,7 +1,7 @@
 use Test;
-use Yu::Test;
+use Yup::Test;
 
-my @lines = run-and-collect-lines("ex/power.yu");
+my @lines = run-and-collect-lines("ex/power.yup");
 
 is +@lines, 4, "correct number of lines of output";
 is @lines[0], "8", "line #1 correct";

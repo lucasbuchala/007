@@ -1,4 +1,4 @@
-use Yu::Val;
+use Yup::Val;
 
 class X::Control::Return is Exception {
     has $.frame;
@@ -54,7 +54,7 @@ class X::TypeCheck::HeterogeneousArray is Exception {
     }
 }
 
-class X::Yu::RuntimeException is Exception {
+class X::Yup::RuntimeException is Exception {
     has $.msg;
 
     method message {
@@ -661,7 +661,7 @@ class Q::Statement::Throw does Q::Statement {
         die X::TypeCheck.new(:got($value), :excpected(Val::Exception))
             if $value !~~ Val::Exception;
 
-        die X::Yu::RuntimeException.new(:msg($value.message.value));
+        die X::Yup::RuntimeException.new(:msg($value.message.value));
     }
 }
 

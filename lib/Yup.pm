@@ -1,14 +1,14 @@
-use Yu::Runtime;
-use Yu::Parser;
-use Yu::Linter;
+use Yup::Runtime;
+use Yup::Parser;
+use Yup::Linter;
 
-class Yu {
+class Yup {
     method runtime(:$input = $*IN, :$output = $*OUT, :@arguments) {
-        Yu::Runtime.new(:$input, :$output, :@arguments);
+        Yup::Runtime.new(:$input, :$output, :@arguments);
     }
 
     method parser(:$runtime = $.runtime) {
-        Yu::Parser.new(:$runtime);
+        Yup::Parser.new(:$runtime);
     }
 
     method !parser-with-no-output {
@@ -18,7 +18,7 @@ class Yu {
     }
 
     method linter(:$parser = self!parser-with-no-output) {
-        Yu::Linter.new(:$parser);
+        Yup::Linter.new(:$parser);
     }
 }
 
