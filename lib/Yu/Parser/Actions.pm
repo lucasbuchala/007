@@ -445,7 +445,7 @@ class Yu::Parser::Actions {
             :name(Val::Str.new(:value("prefix:$op"))),
             :frame($*runtime.current-frame),
         );
-        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::NilType));
+        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::Nil));
     }
 
     method prefix-unquote($/) {

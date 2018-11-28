@@ -245,7 +245,7 @@ class Q::Term::Func does Q::Term does Q::Declaration {
     method attribute-order { <identifier traitlist block> }
 
     method eval($runtime) {
-        my $name = $.identifier ~~ Val::NilType
+        my $name = $.identifier ~~ Val::Nil
             ?? Val::Str.new(:value(""))
             !! $.identifier.name;
         return Val::Func.new(
@@ -316,7 +316,7 @@ class Q::Infix::Or is Q::Infix {
 class Q::Infix::DefinedOr is Q::Infix {
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
-        return $l !~~ Val::NilType
+        return $l !~~ Val::Nil
             ?? $l
             !! $.rhs.eval($runtime);
     }
@@ -645,7 +645,7 @@ class Q::Statement::Return does Q::Statement {
     has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NilType ?? $.expr !! $.expr.eval($runtime);
+        my $value = $.expr ~~ Val::Nil ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
@@ -655,7 +655,7 @@ class Q::Statement::Throw does Q::Statement {
     has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NilType
+        my $value = $.expr ~~ Val::Nil
             ?? Val::Exception.new(:message(Val::Str.new(:value("Died"))))
             !! $.expr.eval($runtime);
         die X::TypeCheck.new(:got($value), :excpected(Val::Exception))

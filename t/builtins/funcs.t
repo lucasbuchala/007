@@ -15,7 +15,7 @@ use Yu::Test;
         say(type(prompt(">>> ")));
         .
 
-    outputs $program, ">>> \n<type NilType>\n", "say() works";
+    outputs $program, ">>> \n<type Nil>\n", "say() works";
 }
 
 {
@@ -23,7 +23,7 @@ use Yu::Test;
         say(type(nil));
         .
 
-    outputs $program, "<type NilType>\n", "nil type() works";
+    outputs $program, "<type Nil>\n", "nil type() works";
 }
 
 {

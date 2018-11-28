@@ -367,10 +367,10 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
-        say(NilType.create([]));
+        say(Nil.create([]));
         .
 
-    runtime-error $program, X::Uninstantiable, "can't instantiate a NilType";
+    runtime-error $program, X::Uninstantiable, "can't instantiate a Nil";
 }
 
 {

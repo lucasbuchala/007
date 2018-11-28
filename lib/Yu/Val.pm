@@ -19,13 +19,13 @@ role Val {
     }
 }
 
-class Val::NilType does Val {
+class Val::Nil does Val {
     method truthy {
         False
     }
 }
 
-constant NIL is export = Val::NilType.new;
+constant NIL is export = Val::Nil.new;
 
 class Val::Bool does Val {
     has Bool $.value;
@@ -222,7 +222,7 @@ class Val::Type does Val {
                 method ^name(\$) \{ "{$name}" \}
             \}]));
         }
-        elsif $.type ~~ Val::NilType || $.type ~~ Val::Bool || is-role($.type) {
+        elsif $.type ~~ Val::Nil || $.type ~~ Val::Bool || is-role($.type) {
             die X::Uninstantiable.new(:$.name);
         }
         else {
@@ -280,7 +280,7 @@ class Val::Exception does Val {
 
 class Helper {
     our sub Str($_) {
-        when Val::NilType { 'nil' }
+        when Val::Nil { 'nil' }
         when Val::Bool { .value.Str }
         when Val::Int { .value.Str }
         when Val::Str { .value }

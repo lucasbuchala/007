@@ -1,4 +1,4 @@
-### NilType
+### Nil
 
 A type with only one value, indicating the lack of a value where one was
 expected.
@@ -20,7 +20,7 @@ a certain child element is not present. For example, an `if` statement
 doesn't always have an `else` statement. When it doesn't, the `.else`
 property is set to `nil`.
 
-    say(type((quasi<Q.Statement> { if 1 {} }).else)); # --> `<type NilType>`
+    say(type((quasi<Q.Statement> { if 1 {} }).else)); # --> `<type Nil>`
 
 The value `nil` is falsy, stringifies to `nil`, and doesn't numify.
 
@@ -334,7 +334,7 @@ are required.
     say(type({}));          # --> `<type Object>`
     say(type(type({})));    # --> `<type Type>`
 
-007 comes with a number of built-in types: `NilType`, `Bool`, `Int`,
+007 comes with a number of built-in types: `Nil`, `Bool`, `Int`,
 `Str`, `Array`, `Object`, `Regex`, `Type`, `Block`, `Sub`, `Macro`,
 and `Exception`.
 

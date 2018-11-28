@@ -128,7 +128,7 @@ class Yu::Runtime {
     }
 
     method !maybe-find-pad(Str $symbol, $frame is copy) {
-        if $frame ~~ Val::NilType {    # XXX: make a `defined` method on NilType so we can use `//`
+        if $frame ~~ Val::Nil {    # XXX: make a `defined` method on Nil so we can use `//`
             $frame = self.current-frame;
         }
         repeat until $frame === NO_OUTER {
@@ -142,7 +142,7 @@ class Yu::Runtime {
 
     method put-var(Q::Identifier $identifier, $value) {
         my $name = $identifier.name.value;
-        my $frame = $identifier.frame ~~ Val::NilType
+        my $frame = $identifier.frame ~~ Val::Nil
             ?? self.current-frame
             !! $identifier.frame;
         my $pad = self!find-pad($name, $frame);
@@ -162,7 +162,7 @@ class Yu::Runtime {
 
     method declare-var(Q::Identifier $identifier, $value?) {
         my $name = $identifier.name.value;
-        my Val::Object $frame = $identifier.frame ~~ Val::NilType
+        my Val::Object $frame = $identifier.frame ~~ Val::Nil
             ?? self.current-frame
             !! $identifier.frame;
         $frame.properties<pad>.properties{$name} = $value // NIL;
