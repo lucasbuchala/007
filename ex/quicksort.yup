@@ -1,9 +1,9 @@
 sub quicksort(array) {
     if array.size() > 1 {
         my pivot = array[0];
-        my less = quicksort(array.filter(sub (e) { return e < pivot }));
-        my equal = array.filter(sub (e) { return e == pivot });
-        my greater = quicksort(array.filter(sub (e) { return e > pivot }));
+        my less = quicksort(array.grep(sub (e) { return e < pivot }));
+        my equal = array.grep(sub (e) { return e == pivot });
+        my greater = quicksort(array.grep(sub (e) { return e > pivot }));
         array = less.concat(equal.concat(greater));
     }
     return array;

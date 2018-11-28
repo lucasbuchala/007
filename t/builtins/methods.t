@@ -183,10 +183,10 @@ use Yup::Test;
 {
     my $program = q:to/./;
         sub f(n) { n == 2 }
-        say([1, 2, 3, 2].filter(f));
+        say([1, 2, 3, 2].grep(f));
         .
 
-    outputs $program, "[2, 2]\n", "filter() returns the elements from an array matching a predicate";
+    outputs $program, "[2, 2]\n", "grep() returns the elements from an array matching a predicate";
 }
 
 {

@@ -448,8 +448,8 @@ class Yup::Runtime {
                 return Val::Bool.new(:value($obj.search($str.value)));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "filter" {
-            return builtin(sub filter($fn) {
+        elsif $obj ~~ Val::Array && $propname eq "grep" {
+            return builtin(sub grep($fn) {
                 my @elements = $obj.elements.grep({ self.call($fn, [$_]).truthy });
                 return Val::Array.new(:@elements);
             });
@@ -577,8 +577,8 @@ class Yup::Runtime {
                 return Val::Str.new(:value($obj.elements.join($sep.value.Str)));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "filter" {
-            return builtin(sub filter($fn) {
+        elsif $obj ~~ Val::Tuple && $propname eq "grep" {
+            return builtin(sub grep($fn) {
                 my @elements = $obj.elements.grep({ self.call($fn, [$_]).truthy });
                 return Val::Tuple.new(:@elements);
             });

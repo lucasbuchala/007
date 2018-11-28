@@ -201,7 +201,7 @@ through a predicate function:
 
     my numbers = [1, 2, 3, 4, 5];
     say(numbers.map(sub (e) { return e * 2 }));     # --> `[2, 4, 6, 8, 10]`
-    say(numbers.filter(sub (e) { return e %% 2 })); # --> `[2, 4]`
+    say(numbers.grep(sub (e) { return e %% 2 })); # --> `[2, 4]`
 
 ### Tuple
 
@@ -235,7 +235,7 @@ through a predicate function:
 
     my numbers = (1, 2, 3, 4, 5);
     say(numbers.map(sub (e) { return e * 2 }));     # --> `(2, 4, 6, 8, 10)`
-    say(numbers.filter(sub (e) { return e %% 2 })); # --> `(2, 4)`
+    say(numbers.grep(sub (e) { return e %% 2 })); # --> `(2, 4)`
 
 ### Object
 
