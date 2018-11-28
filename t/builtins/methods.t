@@ -303,6 +303,14 @@ use Yu::Test;
 
 {
     my $program = q:to/./;
+        say("foobar".contains("foo") ~~ Bool);
+        .
+
+    outputs $program, "True\n", "contains() returns a Bool value";
+}
+
+{
+    my $program = q:to/./;
         say(Object.create([["foo", 42]]));
         .
 
