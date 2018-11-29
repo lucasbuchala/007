@@ -8,7 +8,7 @@ class X::Uninstantiable is Exception {
 
 class Helper { ... }
 
-role Val {
+role Yup::Value {
     method truthy { True }
     method attributes { self.^attributes }
     method quoted-Str { self.Str }
@@ -19,7 +19,7 @@ role Val {
     }
 }
 
-class Val::Nil does Val {
+class Val::Nil does Yup::Value {
     method truthy {
         False
     }
@@ -27,7 +27,7 @@ class Val::Nil does Val {
 
 constant NIL is export = Val::Nil.new;
 
-class Val::Bool does Val {
+class Val::Bool does Yup::Value {
     has Bool $.value;
 
     method truthy {
@@ -37,7 +37,7 @@ class Val::Bool does Val {
     method Str { $!value ?? 'true' !! 'false' }
 }
 
-class Val::Int does Val {
+class Val::Int does Yup::Value {
     has Int $.value;
 
     method truthy {
@@ -45,7 +45,7 @@ class Val::Int does Val {
     }
 }
 
-class Val::Str does Val {
+class Val::Str does Yup::Value {
     has Str $.value;
 
     method quoted-Str {
@@ -57,7 +57,7 @@ class Val::Str does Val {
     }
 }
 
-class Val::Regex does Val {
+class Val::Regex does Yup::Value {
     # note: a regex should probably keep its lexpad or something to resolve calls&identifiers
     has $.contents;
 
@@ -138,7 +138,7 @@ class Val::Regex does Val {
     }
 }
 
-class Val::Array does Val {
+class Val::Array does Yup::Value {
     has @.elements;
 
     method quoted-Str {
@@ -153,7 +153,7 @@ class Val::Array does Val {
     }
 }
 
-class Val::Tuple does Val {
+class Val::Tuple does Yup::Value {
     has @.elements;
 
     method quoted-Str {
@@ -172,7 +172,7 @@ class Val::Tuple does Val {
 
 our $global-object-id = 0;
 
-class Val::Object does Val {
+class Val::Object does Yup::Value {
     has %.properties{Str};
     has $.id = $global-object-id++;
 
@@ -193,7 +193,7 @@ class Val::Object does Val {
     }
 }
 
-class Val::Type does Val {
+class Val::Type does Yup::Value {
     has $.type;
 
     method of($type) {
@@ -235,7 +235,7 @@ class Val::Type does Val {
     }
 }
 
-class Val::Sub is Val {
+class Val::Sub does Yup::Value {
     has Val::Str $.name;
     has &.hook = Callable;
     has $.parameterlist;
@@ -274,7 +274,7 @@ class Val::Macro is Val::Sub {
     method Str { "<macro {$.escaped-name}{$.pretty-parameters}>" }
 }
 
-class Val::Exception does Val {
+class Val::Exception does Yup::Value {
     has Val::Str $.message;
 }
 

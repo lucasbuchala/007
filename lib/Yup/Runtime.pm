@@ -269,7 +269,7 @@ class Yup::Runtime {
                         if $thing ~~ Val::Object;
 
                     return $thing
-                        if $thing ~~ Val;
+                        if $thing ~~ Yup::Value;
 
                     return $thing.new(:name($thing.name), :frame(NIL))
                         if $thing ~~ Q::Identifier;

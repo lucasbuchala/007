@@ -8,7 +8,7 @@ class X::Control::Exit is Exception {
 }
 
 sub wrap($_) {
-    when Val | Q { $_ }
+    when Yup::Value | Q { $_ }
     when Nil  { NIL }
     when Bool { Val::Bool.new(:value($_)) }
     when Int  { Val::Int.new(:value($_)) }
@@ -17,7 +17,7 @@ sub wrap($_) {
     default { die "Got some unknown value of type ", .^name }
 }
 
-subset ValOrQ of Any where Val | Q;
+subset ValOrQ of Any where Yup::Value | Q;
 
 sub assert-type(:$value, ValOrQ:U :$type, Str :$operation) {
     die X::TypeCheck.new(:$operation, :got($value), :expected($type))
