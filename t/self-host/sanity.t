@@ -10,7 +10,7 @@ my class StrOutput {
 
 sub run_007_on_007($program) {
     my $compunit = Yup.parser.parse($program);
-    my $runtime-program = slurp("misc/self-host/runtime.yup");
+    my $runtime-program = slurp("yup/runtime.yup");
     my $output = StrOutput.new;
     my $runtime = Yup.runtime(:$output);
     my $ast = Yup.parser(:$runtime).parse($runtime-program);

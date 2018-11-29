@@ -15,7 +15,7 @@ my NO_OUTER = {};
 my Runtime = {
     new() {
         my frames = [];
-        func enter(outer_frame, static_lexpad) {
+        sub enter(outer_frame, static_lexpad) {
             my frame = { outer_frame, pad: {} };
             frames.push(frame);
             for static_lexpad.keys() -> name {
@@ -24,17 +24,17 @@ my Runtime = {
                 declare_var(identifier, value);
             }
         }
-        func leave() {
+        sub leave() {
             frames.pop();
         }
-        func current_frame() {
+        sub current_frame() {
             if !frames {
                 return NO_OUTER;
             }
             return frames[frames.size() - 1];
         }
 
-        func find_pad(symbol) {
+        sub find_pad(symbol) {
             my frame = current_frame();
             # The below check didn't work
             # while frame.id != NO_OUTER.id {
@@ -47,15 +47,15 @@ my Runtime = {
             }
             throw new Exception { message: "Cannot find variable '" ~ symbol ~ "'" };
         }
-        func get_var(name) {
+        sub get_var(name) {
             my pad = find_pad(name);
             return pad[name];
         }
-        func put_var(name, value) {
+        sub put_var(name, value) {
             my pad = find_pad(name);
             pad[name] = value;
         }
-        func declare_var(identifier, value) {
+        sub declare_var(identifier, value) {
             my name = identifier.name;
             # XXX: don't know if we should expose identifier.frame in 007
             # my frame = identifier.frame || current_frame();
@@ -63,7 +63,7 @@ my Runtime = {
             frame.pad[name] = value;
         }
 
-        func sigbind(c, arguments) {
+        sub sigbind(c, arguments) {
             my paramcount = c.parameterlist.parameters.size();
             my argcount = arguments.size();
             if paramcount != argcount {
@@ -77,7 +77,7 @@ my Runtime = {
             }
         }
 
-        func call(c, arguments) {
+        sub call(c, arguments) {
             sigbind(c, arguments);
             my frame = current_frame();
             run(c.statementlist);
@@ -85,68 +85,68 @@ my Runtime = {
         }
 
         my eval_of_type = {
-            "Q.Identifier": func(ident) {
+            "Q.Identifier": sub(ident) {
                 return get_var(ident.name);
             },
-            "Q.Infix.Addition": func(op) {
+            "Q.Infix.Addition": sub(op) {
                 return eval(op.lhs) + eval(op.rhs);
             },
-            "Q.Infix.And": func(op) {
+            "Q.Infix.And": sub(op) {
                 return eval(op.lhs) && eval(op.rhs);
             },
-            "Q.Infix.Assignment": func(op) {
+            "Q.Infix.Assignment": sub(op) {
                 my value = eval(op.rhs);
                 if op.lhs ~~ Q.Identifier {    # XXX: this assumption does not always hold
                     put_var(op.lhs.name, value);
                 }
                 return value;
             },
-            "Q.Infix.Concat": func(op) {
+            "Q.Infix.Concat": sub(op) {
                 return eval(op.lhs) ~ eval(op.rhs);
             },
-            "Q.Infix.Divisibility": func(op) {
+            "Q.Infix.Divisibility": sub(op) {
                 return eval(op.lhs) %% eval(op.rhs);
             },
-            "Q.Infix.Eq": func(op) {
+            "Q.Infix.Eq": sub(op) {
                 return eval(op.lhs) == eval(op.rhs);
             },
-            "Q.Infix.Ge": func(op) {
+            "Q.Infix.Ge": sub(op) {
                 return eval(op.lhs) >= eval(op.rhs);
             },
-            "Q.Infix.Gt": func(op) {
+            "Q.Infix.Gt": sub(op) {
                 return eval(op.lhs) > eval(op.rhs);
             },
-            "Q.Infix.Le": func(op) {
+            "Q.Infix.Le": sub(op) {
                 return eval(op.lhs) <= eval(op.rhs);
             },
-            "Q.Infix.Lt": func(op) {
+            "Q.Infix.Lt": sub(op) {
                 return eval(op.lhs) < eval(op.rhs);
             },
-            "Q.Infix.Multiplication": func(op) {
+            "Q.Infix.Multiplication": sub(op) {
                 return eval(op.lhs) * eval(op.rhs);
             },
-            "Q.Infix.Modulo": func(op) {
+            "Q.Infix.Modulo": sub(op) {
                 return eval(op.lhs) % eval(op.rhs);
             },
-            "Q.Infix.Ne": func(op) {
+            "Q.Infix.Ne": sub(op) {
                 return eval(op.lhs) != eval(op.rhs);
             },
-            "Q.Infix.Or": func(op) {
+            "Q.Infix.Or": sub(op) {
                 return eval(op.lhs) || eval(op.rhs);
             },
-            "Q.Infix.Subtraction": func(op) {
+            "Q.Infix.Subtraction": sub(op) {
                 return eval(op.lhs) - eval(op.rhs);
             },
-            "Q.Infix.TypeMatch": func(op) {
+            "Q.Infix.TypeMatch": sub(op) {
                 return eval(op.lhs) ~~ eval(op.rhs);
             },
-            "Q.Literal.Int": func(lit_int) {
+            "Q.Literal.Int": sub(lit_int) {
                 return lit_int.value;
             },
-            "Q.Literal.Str": func(lit_str) {
+            "Q.Literal.Str": sub(lit_str) {
                 return lit_str.value;
             },
-            "Q.Postfix.Call": func(op) {
+            "Q.Postfix.Call": sub(op) {
                 # XXX: short-term hack to get `say` early; needs to go away
                 if op.operand ~~ Q.Identifier && op.operand.name == "say" {
                     return say(eval(op.argumentlist.arguments[0]));
@@ -155,36 +155,36 @@ my Runtime = {
                 if c ~~ Macro {
                     throw new Exception { message: "macro is called at runtime" };
                 }
-                if c !~~ Func {
+                if c !~~ Sub {
                     throw new Exception { message: "Trying to invoke a " ~ type(c).name };
                 }
                 my arguments = op.argumentlist.arguments.map(eval);
                 return call(c, arguments);
             },
-            "Q.Postfix.Index": func(op) {
+            "Q.Postfix.Index": sub(op) {
                 return eval(op.operand)[eval(op.index)];
             },
-            "Q.Postfix.Property": func(op) {
+            "Q.Postfix.Property": sub(op) {
                 return eval(op.operand)[eval(op.property)];
             },
-            "Q.Prefix.Minus": func(op) {
+            "Q.Prefix.Minus": sub(op) {
                 return -eval(op.operand);
             },
-            "Q.Prefix.So": func(op) {
+            "Q.Prefix.So": sub(op) {
                 return ?eval(op.operand);
             },
-            "Q.Prefix.Not": func(op) {
+            "Q.Prefix.Not": sub(op) {
                 return !eval(op.operand);
             },
-            "Q.Prefix.Upto": func(op) {
+            "Q.Prefix.Upto": sub(op) {
                 return ^eval(op.operand);
             },
-            "Q.Term.Array": func(array) {
+            "Q.Term.Array": sub(array) {
                 return array.elements.map(eval);
             },
-            "Q.Term.Func": func(term) {
+            "Q.Term.Sub": sub(term) {
                 my name = term.identifier && term.identifier.name || "";
-                return new Func {
+                return new Sub {
                     name,
                     parameterlist: term.block.parameterlist,
                     statementlist: term.block.statementlist,
@@ -195,41 +195,41 @@ my Runtime = {
 
             # these were added to be able to run more tests
             # please move and implement as necessary
-            "Q.Block": func(block) {
+            "Q.Block": sub(block) {
             },
-            "Q.Infix": func(op) {
+            "Q.Infix": sub(op) {
             },
-            "Q.Postfix": func(op) {
+            "Q.Postfix": sub(op) {
             },
-            "Q.Prefix": func(op) {
+            "Q.Prefix": sub(op) {
             },
-            "Q.Term.Object": func(term) {
+            "Q.Term.Object": sub(term) {
             },
-            "Q.Term.Quasi": func(term) {
+            "Q.Term.Quasi": sub(term) {
             },
-            "Q.Expr.BlockAdapter": func(adapter) {
+            "Q.Expr.BlockAdapter": sub(adapter) {
             },
         };
-        func eval(q) { return eval_of_type[type(q).name](q); }
+        sub eval(q) { return eval_of_type[type(q).name](q); }
 
         my run_of_type = {
-            "Q.Statement.BEGIN": func(stmt) {
+            "Q.Statement.BEGIN": sub(stmt) {
                 # no runtime behavior
             },
-            "Q.CompUnit": func(compunit) {
+            "Q.CompUnit": sub(compunit) {
                 enter(current_frame(), compunit.block["static-lexpad"]);
                 run(compunit.block.statementlist);
                 leave();
             },
-            "Q.Statement.Block": func(stmt) {
+            "Q.Statement.Block": sub(stmt) {
                 enter(current_frame(), stmt.block["static-lexpad"]);
                 run(stmt.block.statementlist);
                 leave();
             },
-            "Q.Statement.Expr": func(stmt) {
+            "Q.Statement.Expr": sub(stmt) {
                 eval(stmt.expr);
             },
-            "Q.Statement.For": func(stmt) {
+            "Q.Statement.For": sub(stmt) {
                 my array = eval(stmt.expr);
 
                 for array -> arg {
@@ -242,7 +242,7 @@ my Runtime = {
                     leave();
                 }
             },
-            "Q.Statement.If": func(stmt) {
+            "Q.Statement.If": sub(stmt) {
                 my expr = eval(stmt.expr);
                 if expr {
                     enter(current_frame(), stmt.block["static-lexpad"]);
@@ -254,19 +254,19 @@ my Runtime = {
                     leave();
                 }
             },
-            "Q.Statement.Macro": func(stmt) {
+            "Q.Statement.Macro": sub(stmt) {
                 # no runtime behavior
             },
-            "Q.Statement.My": func(stmt) {
+            "Q.Statement.My": sub(stmt) {
                 my name = stmt.identifier.name;
                 if stmt.expr {
                     put_var(name, eval(stmt.expr));
                 }
             },
-            "Q.Statement.Func": func(stmt) {
+            "Q.Statement.Sub": sub(stmt) {
                 # no runtime behavior
             },
-            "Q.Statement.While": func(stmt) {
+            "Q.Statement.While": sub(stmt) {
                 my expr;
                 while expr = eval(stmt.expr) {
                     enter(current_frame(), stmt.block["static-lexpad"]);
@@ -278,7 +278,7 @@ my Runtime = {
                     leave();
                 }
             },
-            "Q.StatementList": func(stmtlist) {
+            "Q.StatementList": sub(stmtlist) {
                 for stmtlist.statements -> statement {
                     run(statement);
                 }
@@ -286,10 +286,10 @@ my Runtime = {
 
             # these were added to be able to run more tests
             # please move and implement as necessary
-            "Q.Statement.Return": func(stmt) {
+            "Q.Statement.Return": sub(stmt) {
             },
         };
-        func run(q) { run_of_type[type(q).name](q); }
+        sub run(q) { run_of_type[type(q).name](q); }
 
         return { run, get_var, put_var };
     }
