@@ -19,7 +19,7 @@ grammar Yup::Grammar {
     token newpad { <?> {
         $*parser.push-opscope;
         @*declstack.push(@*declstack ?? @*declstack[*-1].clone !! {});
-        $*runtime.enter($*runtime.current-frame, Val::Object.new, Q::StatementList.new);
+        $*runtime.enter($*runtime.current-frame, Yup::Type::Object.new, Q::StatementList.new);
     } }
 
     token finishpad { <?> {
@@ -42,7 +42,7 @@ grammar Yup::Grammar {
         die X::Redeclaration::Outer.new(:$symbol)
             if %*assigned{$frame.id ~ $symbol};
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value($symbol))),
+            :name(Yup::Type::Str.new(:value($symbol))),
             :$frame);
         $*runtime.declare-var($identifier);
         @*declstack[*-1]{$symbol} = $decltype;
@@ -243,7 +243,7 @@ grammar Yup::Grammar {
                 $type = $++
                     ?? $*runtime.property($type, $identifier)
                     !! $*runtime.maybe-get-var($identifier);
-                $type ~~ Val::Type;
+                $type ~~ Yup::Type::Type;
             });
         }> <.ws>
         '{' ~ '}' <propertylist>

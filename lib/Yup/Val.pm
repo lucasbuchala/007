@@ -19,15 +19,15 @@ role Yup::Value {
     }
 }
 
-class Val::Nil does Yup::Value {
+class Yup::Type::Nil does Yup::Value {
     method truthy {
         False
     }
 }
 
-constant NIL is export = Val::Nil.new;
+constant NIL is export = Yup::Type::Nil.new;
 
-class Val::Bool does Yup::Value {
+class Yup::Type::Bool does Yup::Value {
     has Bool $.value;
 
     method truthy {
@@ -37,7 +37,7 @@ class Val::Bool does Yup::Value {
     method Str { $!value ?? 'true' !! 'false' }
 }
 
-class Val::Int does Yup::Value {
+class Yup::Type::Int does Yup::Value {
     has Int $.value;
 
     method truthy {
@@ -45,7 +45,7 @@ class Val::Int does Yup::Value {
     }
 }
 
-class Val::Str does Yup::Value {
+class Yup::Type::Str does Yup::Value {
     has Str $.value;
 
     method quoted-Str {
@@ -57,7 +57,7 @@ class Val::Str does Yup::Value {
     }
 }
 
-class Val::Regex does Yup::Value {
+class Yup::Type::Regex does Yup::Value {
     # note: a regex should probably keep its lexpad or something to resolve calls&identifiers
     has $.contents;
 
@@ -138,7 +138,7 @@ class Val::Regex does Yup::Value {
     }
 }
 
-class Val::Array does Yup::Value {
+class Yup::Type::Array does Yup::Value {
     has @.elements;
 
     method quoted-Str {
@@ -153,7 +153,7 @@ class Val::Array does Yup::Value {
     }
 }
 
-class Val::Tuple does Yup::Value {
+class Yup::Type::Tuple does Yup::Value {
     has @.elements;
 
     method quoted-Str {
@@ -172,7 +172,7 @@ class Val::Tuple does Yup::Value {
 
 our $global-object-id = 0;
 
-class Val::Object does Yup::Value {
+class Yup::Type::Object does Yup::Value {
     has %.properties{Str};
     has $.id = $global-object-id++;
 
@@ -183,7 +183,7 @@ class Val::Object does Yup::Value {
         return '{' ~ %.properties.map({
             my $key = .key ~~ /^<!before \d> [\w+]+ % '::'$/
                 ?? .key
-                !! Val::Str.new(value => .key).quoted-Str;
+                !! Yup::Type::Str.new(value => .key).quoted-Str;
             "{$key}: {.value.quoted-Str}"
         }).sort.join(', ') ~ '}';
     }
@@ -193,7 +193,7 @@ class Val::Object does Yup::Value {
     }
 }
 
-class Val::Type does Yup::Value {
+class Yup::Type::Type does Yup::Value {
     has $.type;
 
     method of($type) {
@@ -206,23 +206,23 @@ class Val::Type does Yup::Value {
     }
 
     method create(@properties) {
-        if $.type ~~ Val::Object {
+        if $.type ~~ Yup::Type::Object {
             return $.type.new(:@properties);
         }
-        elsif $.type ~~ Val::Int | Val::Str {
+        elsif $.type ~~ Yup::Type::Int | Yup::Type::Str {
             return $.type.new(:value(@properties[0].value.value));
         }
-        elsif $.type ~~ Val::Array | Val::Tuple {
+        elsif $.type ~~ Yup::Type::Array | Yup::Type::Tuple {
             return $.type.new(:elements(@properties[0].value.elements));
         }
-        elsif $.type ~~ Val::Type {
+        elsif $.type ~~ Yup::Type::Type {
             my $name = @properties[0].value;
             return $.type.new(:type(EVAL qq[class :: \{
                 method attributes \{ () \}
                 method ^name(\$) \{ "{$name}" \}
             \}]));
         }
-        elsif $.type ~~ Val::Nil || $.type ~~ Val::Bool || is-role($.type) {
+        elsif $.type ~~ Yup::Type::Nil || $.type ~~ Yup::Type::Bool || is-role($.type) {
             die X::Uninstantiable.new(:$.name);
         }
         else {
@@ -231,20 +231,20 @@ class Val::Type does Yup::Value {
     }
 
     method name {
-        $.type.^name.subst(/^ "Val::"/, "").subst(/"::"/, ".", :g);
+        $.type.^name.subst(/^ "Yup::Type::"/, "").subst(/"::"/, ".", :g);
     }
 }
 
-class Val::Sub does Yup::Value {
-    has Val::Str $.name;
+class Yup::Type::Sub does Yup::Value {
+    has Yup::Type::Str $.name;
     has &.hook = Callable;
     has $.parameterlist;
     has $.statementlist;
-    has Val::Object $.static-lexpad is rw = Val::Object.new;
-    has Val::Object $.outer-frame;
+    has Yup::Type::Object $.static-lexpad is rw = Yup::Type::Object.new;
+    has Yup::Type::Object $.outer-frame;
 
     method new-builtin(&hook, Str $name, $parameterlist, $statementlist) {
-        self.bless(:name(Val::Str.new(:value($name))), :&hook, :$parameterlist, :$statementlist);
+        self.bless(:name(Yup::Type::Str.new(:value($name))), :&hook, :$parameterlist, :$statementlist);
     }
 
     method escaped-name {
@@ -270,28 +270,28 @@ class Val::Sub does Yup::Value {
     method Str { "<sub {$.escaped-name}{$.pretty-parameters}>" }
 }
 
-class Val::Macro is Val::Sub {
+class Yup::Type::Macro is Yup::Type::Sub {
     method Str { "<macro {$.escaped-name}{$.pretty-parameters}>" }
 }
 
-class Val::Exception does Yup::Value {
-    has Val::Str $.message;
+class Yup::Type::Exception does Yup::Value {
+    has Yup::Type::Str $.message;
 }
 
 class Helper {
     our sub Str($_) {
-        when Val::Nil { 'nil' }
-        when Val::Bool { .value.Str }
-        when Val::Int { .value.Str }
-        when Val::Str { .value }
-        when Val::Regex { .quoted-Str }
-        when Val::Array { .quoted-Str }
-        when Val::Tuple { .quoted-Str }
-        when Val::Object { .quoted-Str }
-        when Val::Type { "<type {.name}>" }
-        when Val::Macro { "<macro {.escaped-name}{.pretty-parameters}>" }
-        when Val::Sub { "<sub {.escaped-name}{.pretty-parameters}>" }
-        when Val::Exception { "Exception \{message: {.message.quoted-Str}\}" }
+        when Yup::Type::Nil { 'nil' }
+        when Yup::Type::Bool { .value.Str }
+        when Yup::Type::Int { .value.Str }
+        when Yup::Type::Str { .value }
+        when Yup::Type::Regex { .quoted-Str }
+        when Yup::Type::Array { .quoted-Str }
+        when Yup::Type::Tuple { .quoted-Str }
+        when Yup::Type::Object { .quoted-Str }
+        when Yup::Type::Type { "<type {.name}>" }
+        when Yup::Type::Macro { "<macro {.escaped-name}{.pretty-parameters}>" }
+        when Yup::Type::Sub { "<sub {.escaped-name}{.pretty-parameters}>" }
+        when Yup::Type::Exception { "Exception \{message: {.message.quoted-Str}\}" }
         default {
             my $self = $_;
             my $name = .^name;

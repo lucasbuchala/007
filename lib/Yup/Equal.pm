@@ -3,11 +3,11 @@ use Yup::Q;
 
 # These multis are used below by infix:<==> and infix:<!=>
 multi equal-value($, $) is export { False }
-multi equal-value(Val::Nil, Val::Nil) { True }
-multi equal-value(Val::Bool $l, Val::Bool $r) { $l.value == $r.value }
-multi equal-value(Val::Int $l, Val::Int $r) { $l.value == $r.value }
-multi equal-value(Val::Str $l, Val::Str $r) { $l.value eq $r.value }
-multi equal-value(Val::Array $l, Val::Array $r) {
+multi equal-value(Yup::Type::Nil, Yup::Type::Nil) { True }
+multi equal-value(Yup::Type::Bool $l, Yup::Type::Bool $r) { $l.value == $r.value }
+multi equal-value(Yup::Type::Int $l, Yup::Type::Int $r) { $l.value == $r.value }
+multi equal-value(Yup::Type::Str $l, Yup::Type::Str $r) { $l.value eq $r.value }
+multi equal-value(Yup::Type::Array $l, Yup::Type::Array $r) {
     if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
         return $l === $r;
     }
@@ -21,7 +21,7 @@ multi equal-value(Val::Array $l, Val::Array $r) {
     [&&] $l.elements == $r.elements,
         |(^$l.elements).map(&equal-at-index);
 }
-multi equal-value(Val::Object $l, Val::Object $r) {
+multi equal-value(Yup::Type::Object $l, Yup::Type::Object $r) {
     if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
         return $l === $r;
     }
@@ -35,10 +35,10 @@ multi equal-value(Val::Object $l, Val::Object $r) {
     [&&] $l.properties.keys.sort.perl eq $r.properties.keys.sort.perl,
         |($l.properties.keys).map(&equal-at-key);
 }
-multi equal-value(Val::Type $l, Val::Type $r) {
+multi equal-value(Yup::Type::Type $l, Yup::Type::Type $r) {
     $l.type === $r.type
 }
-multi equal-value(Val::Sub $l, Val::Sub $r) {
+multi equal-value(Yup::Type::Sub $l, Yup::Type::Sub $r) {
     $l === $r
 }
 multi equal-value(Q $l, Q $r) {

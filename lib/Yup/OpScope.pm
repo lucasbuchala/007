@@ -87,7 +87,7 @@ class Yup::OpScope {
 
     method install($category, $op, $q?, :%precedence, :$assoc) {
         my $name = "$category:$op";
-        my $identifier = Q::Identifier.new(:name(Val::Str.new(:value($name))));
+        my $identifier = Q::Identifier.new(:name(Yup::Type::Str.new(:value($name))));
 
         %!ops{$category}{$op} = $q !=== Any ?? $q !! {
             prefix => Q::Prefix.new(:$identifier),

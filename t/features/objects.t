@@ -145,7 +145,7 @@ use Yup::Test;
     outputs
         $program,
         qq[42\n],
-        "can create a Val::Object by explicitly naming 'Object'";
+        "can create a Yup::Type::Object by explicitly naming 'Object'";
 }
 
 {
@@ -162,7 +162,7 @@ use Yup::Test;
     outputs
         $program,
         qq[true\ntrue\ntrue\n],
-        "can create normal Val:: objects using typed object literals";
+        "can create normal Yup::Type:: objects using typed object literals";
 }
 
 {

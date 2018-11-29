@@ -103,26 +103,26 @@ class Q::Literal::Nil does Q::Literal {
 }
 
 class Q::Literal::Bool does Q::Literal {
-    has Val::Bool $.value;
+    has Yup::Type::Bool $.value;
 
     method eval($) { $.value }
     method Str { $!value ?? 'true' !! 'false' }
 }
 
 class Q::Literal::Int does Q::Literal {
-    has Val::Int $.value;
+    has Yup::Type::Int $.value;
 
     method eval($) { $.value }
 }
 
 class Q::Literal::Str does Q::Literal {
-    has Val::Str $.value;
+    has Yup::Type::Str $.value;
 
     method eval($) { $.value }
 }
 
 class Q::Identifier does Q::Term {
-    has Val::Str $.name;
+    has Yup::Type::Str $.name;
     has $.frame = NIL;
 
     method attribute-order { <name> }
@@ -140,7 +140,7 @@ role Q::Regex::Fragment {
 }
 
 class Q::Regex::Str does Q::Regex::Fragment {
-    has Val::Str $.contents;
+    has Yup::Type::Str $.contents;
 }
 
 class Q::Regex::Identifier does Q::Regex::Fragment {
@@ -180,28 +180,28 @@ class Q::Term::Regex does Q::Term {
     has Q::Regex::Fragment $.contents;
 
     method eval($runtime) {
-        Val::Regex.new(:$.contents);
+        Yup::Type::Regex.new(:$.contents);
     }
 }
 
 class Q::Term::Array does Q::Term {
-    has Val::Array $.elements;
+    has Yup::Type::Array $.elements;
 
     method eval($runtime) {
-        Val::Array.new(:elements($.elements.elements.map(*.eval($runtime))));
+        Yup::Type::Array.new(:elements($.elements.elements.map(*.eval($runtime))));
     }
 }
 
 class Q::Term::Tuple does Q::Term {
-    has Val::Tuple $.elements;
+    has Yup::Type::Tuple $.elements;
 
     method eval($runtime) {
-        Val::Tuple.new(:elements($.elements.elements.map(*.eval($runtime))));
+        Yup::Type::Tuple.new(:elements($.elements.elements.map(*.eval($runtime))));
     }
 }
 
 class Q::Term::Object does Q::Term {
-    has Val::Type $.type;
+    has Yup::Type::Type $.type;
     has $.propertylist;
 
     method eval($runtime) {
@@ -212,12 +212,12 @@ class Q::Term::Object does Q::Term {
 }
 
 class Q::Property does Q {
-    has Val::Str $.key;
+    has Yup::Type::Str $.key;
     has $.value;
 }
 
 class Q::PropertyList does Q {
-    has Val::Array $.properties .= new;
+    has Yup::Type::Array $.properties .= new;
 }
 
 role Q::Declaration {
@@ -232,7 +232,7 @@ class Q::Trait does Q {
 }
 
 class Q::TraitList does Q {
-    has Val::Array $.traits .= new;
+    has Yup::Type::Array $.traits .= new;
 
     method attribute-order { <traits> }
 }
@@ -245,10 +245,10 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
     method attribute-order { <identifier traitlist block> }
 
     method eval($runtime) {
-        my $name = $.identifier ~~ Val::Nil
-            ?? Val::Str.new(:value(""))
+        my $name = $.identifier ~~ Yup::Type::Nil
+            ?? Yup::Type::Str.new(:value(""))
             !! $.identifier.name;
-        return Val::Sub.new(
+        return Yup::Type::Sub.new(
             :$name,
             :parameterlist($.block.parameterlist),
             :statementlist($.block.statementlist),
@@ -261,7 +261,7 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
 class Q::Block does Q {
     has $.parameterlist;
     has $.statementlist;
-    has Val::Object $.static-lexpad is rw = Val::Object.new;
+    has Yup::Type::Object $.static-lexpad is rw = Yup::Type::Object.new;
     # XXX
     has $.frame is rw;
 
@@ -316,7 +316,7 @@ class Q::Infix::Or is Q::Infix {
 class Q::Infix::DefinedOr is Q::Infix {
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
-        return $l !~~ Val::Nil
+        return $l !~~ Yup::Type::Nil
             ?? $l
             !! $.rhs.eval($runtime);
     }
@@ -351,47 +351,47 @@ class Q::Postfix::Index is Q::Postfix {
 
     method eval($runtime) {
         given $.operand.eval($runtime) {
-            when Val::Array | Val::Tuple {
+            when Yup::Type::Array | Yup::Type::Tuple {
                 my $index = $.index.eval($runtime);
                 die X::Subscript::NonInteger.new
-                    if $index !~~ Val::Int;
+                    if $index !~~ Yup::Type::Int;
                 die X::Subscript::TooLarge.new(:value($index.value), :length(+.elements))
                     if $index.value >= .elements;
                 die X::Subscript::Negative.new(:$index, :type([]))
                     if $index.value < 0;
                 return .elements[$index.value];
             }
-            when Val::Object | Val::Sub | Q {
+            when Yup::Type::Object | Yup::Type::Sub | Q {
                 my $property = $.index.eval($runtime);
                 die X::Subscript::NonString.new
-                    if $property !~~ Val::Str;
+                    if $property !~~ Yup::Type::Str;
                 my $propname = $property.value;
                 return $runtime.property($_, $propname);
             }
-            die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Val::Array));
+            die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Yup::Type::Array));
         }
     }
 
     method put-value($value, $runtime) {
         given $.operand.eval($runtime) {
-            when Val::Array {
+            when Yup::Type::Array {
                 my $index = $.index.eval($runtime);
                 die X::Subscript::NonInteger.new
-                    if $index !~~ Val::Int;
+                    if $index !~~ Yup::Type::Int;
                 die X::Subscript::TooLarge.new(:value($index.value), :length(+.elements))
                     if $index.value >= .elements;
                 die X::Subscript::Negative.new(:$index, :type([]))
                     if $index.value < 0;
                 .elements[$index.value] = $value;
             }
-            when Val::Object | Q {
+            when Yup::Type::Object | Q {
                 my $property = $.index.eval($runtime);
                 die X::Subscript::NonString.new
-                    if $property !~~ Val::Str;
+                    if $property !~~ Yup::Type::Str;
                 my $propname = $property.value;
                 $runtime.put-property($_, $propname, $value);
             }
-            die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Val::Array));
+            die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Yup::Type::Array));
         }
     }
 }
@@ -404,9 +404,9 @@ class Q::Postfix::Call is Q::Postfix {
     method eval($runtime) {
         my $c = $.operand.eval($runtime);
         die "macro is called at runtime"
-            if $c ~~ Val::Macro;
-        die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
-            unless $c ~~ Val::Sub;
+            if $c ~~ Yup::Type::Macro;
+        die "Trying to invoke a {$c.^name.subst(/^'Yup::Type::'/, '')}" # XXX: make this into an X::
+            unless $c ~~ Yup::Type::Sub;
         my @arguments = $.argumentlist.arguments.elements.map(*.eval($runtime));
         return $runtime.call($c, @arguments);
     }
@@ -425,7 +425,7 @@ class Q::Postfix::Property is Q::Postfix {
 
     method put-value($value, $runtime) {
         given $.operand.eval($runtime) {
-            when Val::Object | Q {
+            when Yup::Type::Object | Q {
                 my $propname = $.property.name.value;
                 $runtime.put-property($_, $propname, $value);
             }
@@ -463,10 +463,10 @@ class Q::Term::Quasi does Q::Term {
 
         sub interpolate($thing) {
             return $thing.new(:elements($thing.elements.map(&interpolate)))
-                if $thing ~~ Val::Array;
+                if $thing ~~ Yup::Type::Array;
 
             return $thing.new(:properties(%($thing.properties.map({ .key => interpolate(.value) }))))
-                if $thing ~~ Val::Object;
+                if $thing ~~ Yup::Type::Object;
 
             return $thing
                 if $thing ~~ Yup::Value;
@@ -519,11 +519,11 @@ class Q::Parameter does Q does Q::Declaration {
 }
 
 class Q::ParameterList does Q {
-    has Val::Array $.parameters .= new;
+    has Yup::Type::Array $.parameters .= new;
 }
 
 class Q::ArgumentList does Q {
-    has Val::Array $.arguments .= new;
+    has Yup::Type::Array $.arguments .= new;
 }
 
 role Q::Statement does Q {
@@ -615,8 +615,8 @@ class Q::Statement::For does Q::Statement {
             if $count > 1;
 
         my $array = $.expr.eval($runtime);
-        die X::TypeCheck.new(:operation("for loop"), :got($array), :expected(Val::Array))
-            unless $array ~~ Val::Array;
+        die X::TypeCheck.new(:operation("for loop"), :got($array), :expected(Yup::Type::Array))
+            unless $array ~~ Yup::Type::Array;
 
         for $array.elements -> $arg {
             $runtime.run-block($.block, $count ?? [$arg] !! []);
@@ -645,7 +645,7 @@ class Q::Statement::Return does Q::Statement {
     has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::Nil ?? $.expr !! $.expr.eval($runtime);
+        my $value = $.expr ~~ Yup::Type::Nil ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
@@ -655,11 +655,11 @@ class Q::Statement::Throw does Q::Statement {
     has $.expr = NIL;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::Nil
-            ?? Val::Exception.new(:message(Val::Str.new(:value("Died"))))
+        my $value = $.expr ~~ Yup::Type::Nil
+            ?? Yup::Type::Exception.new(:message(Yup::Type::Str.new(:value("Died"))))
             !! $.expr.eval($runtime);
-        die X::TypeCheck.new(:got($value), :excpected(Val::Exception))
-            if $value !~~ Val::Exception;
+        die X::TypeCheck.new(:got($value), :excpected(Yup::Type::Exception))
+            if $value !~~ Yup::Type::Exception;
 
         die X::Yup::RuntimeException.new(:msg($value.message.value));
     }
@@ -704,7 +704,7 @@ class Q::Statement::Class does Q::Statement does Q::Declaration {
 }
 
 class Q::StatementList does Q {
-    has Val::Array $.statements .= new;
+    has Yup::Type::Array $.statements .= new;
 
     method run($runtime) {
         for $.statements.elements -> $statement {

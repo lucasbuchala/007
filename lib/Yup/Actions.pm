@@ -78,7 +78,7 @@ class Yup::Actions {
     }
 
     method statementlist($/) {
-        make Q::StatementList.new(:statements(Val::Array.new(:elements($<statement>».ast))));
+        make Q::StatementList.new(:statements(Yup::Type::Array.new(:elements($<statement>».ast))));
     }
 
     method statement:expr ($/) {
@@ -105,7 +105,7 @@ class Yup::Actions {
         #      in the expression tree
         if $<EXPR>.ast ~~ Q::Block {
             make Q::Statement::Expr.new(:expr(Q::Postfix::Call.new(
-                :identifier(Q::Identifier.new(:name(Val::Str.new(:value("postfix:()"))))),
+                :identifier(Q::Identifier.new(:name(Yup::Type::Str.new(:value("postfix:()"))))),
                 :operand(Q::Term::Sub.new(:identifier(NIL), :block($<EXPR>.ast))),
                 :argumentlist(Q::ArgumentList.new)
             )));
@@ -136,11 +136,11 @@ class Yup::Actions {
         my $val;
         if $<routine> eq "sub" {
             make Q::Statement::Sub.new(:$identifier, :$traitlist, :$block);
-            $val = Val::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
+            $val = Yup::Type::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
         }
         elsif $<routine> eq "macro" {
             make Q::Statement::Macro.new(:$identifier, :$traitlist, :$block);
-            $val = Val::Macro.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
+            $val = Yup::Type::Macro.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
         }
         else {
             die "Unknown routine type $<routine>"; # XXX: Turn this into an X:: exception
@@ -188,7 +188,7 @@ class Yup::Actions {
         my $identifier = $<identifier>.ast;
         my $block = $<block>.ast;
         make Q::Statement::Class.new(:$block);
-        my $val = Val::Type.of(EVAL qq[class :: \{
+        my $val = Yup::Type::Type.of(EVAL qq[class :: \{
             method attributes \{ () \}
             method ^name(\$) \{ "{$identifier.name.value}" \}
         \}]);
@@ -201,7 +201,7 @@ class Yup::Actions {
             my $trait = $p.key;
             die X::Trait::Duplicate.new(:$trait);
         }
-        make Q::TraitList.new(:traits(Val::Array.new(:elements(@traits))));
+        make Q::TraitList.new(:traits(Yup::Type::Array.new(:elements(@traits))));
     }
     method trait($/) {
         make Q::Trait.new(:identifier($<identifier>.ast), :expr($<EXPR>.ast));
@@ -238,7 +238,7 @@ class Yup::Actions {
     sub is-macro($q, $qtype, $identifier) {
         $q ~~ $qtype
             && $identifier ~~ Q::Identifier
-            && (my $macro = $*runtime.maybe-get-var($identifier.name.value)) ~~ Val::Macro
+            && (my $macro = $*runtime.maybe-get-var($identifier.name.value)) ~~ Yup::Type::Macro
             && $macro;
     }
 
@@ -250,14 +250,14 @@ class Yup::Actions {
         }
         else {
             if $expansion ~~ Q::Statement {
-                $expansion = Q::StatementList.new(:statements(Val::Array.new(:elements([$expansion]))));
+                $expansion = Q::StatementList.new(:statements(Yup::Type::Array.new(:elements([$expansion]))));
             }
             elsif $expansion === NIL {
-                $expansion = Q::StatementList.new(:statements(Val::Array.new(:elements([]))));
+                $expansion = Q::StatementList.new(:statements(Yup::Type::Array.new(:elements([]))));
             }
 
             if $expansion ~~ Q::StatementList {
-                $*runtime.enter($*runtime.current-frame, Val::Object.new, $expansion);
+                $*runtime.enter($*runtime.current-frame, Yup::Type::Object.new, $expansion);
                 $expansion = Q::Block.new(
                     :parameterlist(Q::ParameterList.new())
                     :statementlist($expansion));
@@ -442,10 +442,10 @@ class Yup::Actions {
     method prefix($/) {
         my $op = ~$/;
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("prefix:$op"))),
+            :name(Yup::Type::Str.new(:value("prefix:$op"))),
             :frame($*runtime.current-frame),
         );
-        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::Nil));
+        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Yup::Type::Nil));
     }
 
     method prefix-unquote($/) {
@@ -458,7 +458,7 @@ class Yup::Actions {
                 if $s ~~ /\n/;
         }(~$0);
         my $value = (~$0).subst(q[\"], q["], :g).subst(q[\\\\], q[\\], :g);
-        $value = Val::Str.new(:$value);
+        $value = Yup::Type::Str.new(:$value);
         make Q::Literal::Str.new(:$value);
     }
 
@@ -467,15 +467,15 @@ class Yup::Actions {
     }
 
     method term:false ($/) {
-        make Q::Literal::Bool.new(:value(Val::Bool.new(:value(False))));
+        make Q::Literal::Bool.new(:value(Yup::Type::Bool.new(:value(False))));
     }
 
     method term:true ($/) {
-        make Q::Literal::Bool.new(:value(Val::Bool.new(:value(True))));
+        make Q::Literal::Bool.new(:value(Yup::Type::Bool.new(:value(True))));
     }
 
     method term:int ($/) {
-        make Q::Literal::Int.new(:value(Val::Int.new(:value(+$/))));
+        make Q::Literal::Int.new(:value(Yup::Type::Int.new(:value(+$/))));
     }
 
     method term:str ($/) {
@@ -483,12 +483,12 @@ class Yup::Actions {
     }
 
     method term:array ($/) {
-        make Q::Term::Array.new(:elements(Val::Array.new(:elements($<EXPR>».ast))));
+        make Q::Term::Array.new(:elements(Yup::Type::Array.new(:elements($<EXPR>».ast))));
     }
 
     method term:tuple ($/) {
         if $<EXPR>.elems != 1 || $<commas>.elems == $<EXPR>.elems {
-            make Q::Term::Tuple.new(:elements(Val::Tuple.new(:elements($<EXPR>».ast))));
+            make Q::Term::Tuple.new(:elements(Yup::Type::Tuple.new(:elements($<EXPR>».ast))));
         }
         else {
             make $<EXPR>[0].ast;
@@ -541,9 +541,9 @@ class Yup::Actions {
             $*parser.postpone: sub checking-postdeclared {
                 my $value = $*runtime.maybe-get-var($name, $frame);
                 die X::Macro::Postdeclared.new(:$name)
-                    if $value ~~ Val::Macro;
+                    if $value ~~ Yup::Type::Macro;
                 die X::Undeclared.new(:symbol($name))
-                    unless $value ~~ Val::Sub;
+                    unless $value ~~ Yup::Type::Sub;
             };
         }
     }
@@ -553,7 +553,7 @@ class Yup::Actions {
     }
 
     method term:quasi ($/) {
-        my $qtype = Val::Str.new(:value(~($<qtype> // "")));
+        my $qtype = Yup::Type::Str.new(:value(~($<qtype> // "")));
 
         if $<block> -> $block {
             # If the quasi consists of a block with a single expression statement, it's very
@@ -605,7 +605,7 @@ class Yup::Actions {
             my $name = $<identifier>.ast.name;
             my $outer-frame = $*runtime.current-frame.properties<outer-frame>;
             my $static-lexpad = $*runtime.current-frame.properties<pad>;
-            my $val = Val::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
+            my $val = Yup::Type::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
             $<identifier>.ast.put-value($val, $*runtime);
         }
         finish-block($block);
@@ -646,7 +646,7 @@ class Yup::Actions {
         my $type-obj = $type.type;
         my $name = $type-obj.^name.subst("::", ".", :g);
 
-        if $type-obj !=== Val::Object {
+        if $type-obj !=== Yup::Type::Object {
             if is-role($type-obj) {
                 die X::Uninstantiable.new(:$name);
             }
@@ -673,7 +673,7 @@ class Yup::Actions {
 
     method term:object ($/) {
         make Q::Term::Object.new(
-            :type(Val::Type.of(Val::Object)),
+            :type(Yup::Type::Type.of(Yup::Type::Object)),
             :propertylist($<propertylist>.ast));
     }
 
@@ -694,7 +694,7 @@ class Yup::Actions {
                 if %seen{$property}++;
         }
 
-        make Q::PropertyList.new(:properties(Val::Array.new(:elements($<property>».ast))));
+        make Q::PropertyList.new(:properties(Yup::Type::Array.new(:elements($<property>».ast))));
     }
 
     method property:str-expr ($/) {
@@ -725,7 +725,7 @@ class Yup::Actions {
     method infix($/) {
         my $op = ~$/;
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("infix:$op"))),
+            :name(Yup::Type::Str.new(:value("infix:$op"))),
         );
         make $*parser.opscope.ops<infix>{$op}.new(:$identifier, :lhs(NIL), :rhs(NIL));
     }
@@ -750,7 +750,7 @@ class Yup::Actions {
             $op = ".";
         }
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("postfix:$op"))),
+            :name(Yup::Type::Str.new(:value("postfix:$op"))),
             :frame($*runtime.current-frame),
         );
         # XXX: this can't stay hardcoded forever, but we don't have the machinery yet
@@ -778,15 +778,15 @@ class Yup::Actions {
             $value ~~ s:g['\\»'] = '»';
             $value ~~ s:g['\\\\'] = '\\';
         }();
-        make Q::Identifier.new(:name(Val::Str.new(:$value)));
+        make Q::Identifier.new(:name(Yup::Type::Str.new(:$value)));
     }
 
     method argumentlist($/) {
-        make Q::ArgumentList.new(:arguments(Val::Array.new(:elements($<EXPR>».ast))));
+        make Q::ArgumentList.new(:arguments(Yup::Type::Array.new(:elements($<EXPR>».ast))));
     }
 
     method parameterlist($/) {
-        make Q::ParameterList.new(:parameters(Val::Array.new(:elements($<parameter>».ast))));
+        make Q::ParameterList.new(:parameters(Yup::Type::Array.new(:elements($<parameter>».ast))));
     }
 
     method parameter($/) {
@@ -831,12 +831,12 @@ sub check(Q $ast, $runtime) is export {
     multi handle(Q::Statement::Sub $sub) {
         my $outer-frame = $runtime.current-frame;
         my $name = $sub.identifier.name;
-        my $val = Val::Sub.new(:$name,
+        my $val = Yup::Type::Sub.new(:$name,
             :parameterlist($sub.block.parameterlist),
             :statementlist($sub.block.statementlist),
             :$outer-frame
         );
-        $runtime.enter($outer-frame, Val::Object.new, $sub.block.statementlist, $val);
+        $runtime.enter($outer-frame, Yup::Type::Object.new, $sub.block.statementlist, $val);
         handle($sub.block);
         $runtime.leave();
 
@@ -846,12 +846,12 @@ sub check(Q $ast, $runtime) is export {
     multi handle(Q::Statement::Macro $macro) {
         my $outer-frame = $runtime.current-frame;
         my $name = $macro.identifier.name;
-        my $val = Val::Macro.new(:$name,
+        my $val = Yup::Type::Macro.new(:$name,
             :parameterlist($macro.block.parameterlist),
             :statementlist($macro.block.statementlist),
             :$outer-frame
         );
-        $runtime.enter($outer-frame, Val::Object.new, $macro.block.statementlist, $val);
+        $runtime.enter($outer-frame, Yup::Type::Object.new, $macro.block.statementlist, $val);
         handle($macro.block);
         $runtime.leave();
 
@@ -871,7 +871,7 @@ sub check(Q $ast, $runtime) is export {
     }
 
     multi handle(Q::Block $block) {
-        $runtime.enter($runtime.current-frame, Val::Object.new, Q::StatementList.new);
+        $runtime.enter($runtime.current-frame, Yup::Type::Object.new, Q::StatementList.new);
         handle($block.parameterlist);
         handle($block.statementlist);
         $block.static-lexpad = $runtime.current-frame.properties<pad>;

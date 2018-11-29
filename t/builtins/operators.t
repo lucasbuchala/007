@@ -532,7 +532,7 @@ use Yup::Test;
         my q = 42; say(q ~~ Int)
         .
 
-    outputs $program, "true\n", "typecheck works for Val::Int";
+    outputs $program, "true\n", "typecheck works for Yup::Type::Int";
 }
 
 {
@@ -540,7 +540,7 @@ use Yup::Test;
         my q = [4, 2]; say(q ~~ Array)
         .
 
-    outputs $program, "true\n", "typecheck works for Val::Array";
+    outputs $program, "true\n", "typecheck works for Yup::Type::Array";
 }
 
 {
@@ -548,7 +548,7 @@ use Yup::Test;
         my q = {}; say(q ~~ Object)
         .
 
-    outputs $program, "true\n", "typecheck works for Val::Object";
+    outputs $program, "true\n", "typecheck works for Yup::Type::Object";
 }
 
 {
@@ -646,7 +646,7 @@ use Yup::Test;
     outputs
         $program,
         "true\n",
-        "+Val::Int outputs a Val::Int (regression)";
+        "+Yup::Type::Int outputs a Yup::Type::Int (regression)";
 }
 
 {
@@ -657,7 +657,7 @@ use Yup::Test;
     outputs
         $program,
         "true\n",
-        "+Val::Str outputs a Val::Int (regression)";
+        "+Yup::Type::Str outputs a Yup::Type::Int (regression)";
 }
 
 {

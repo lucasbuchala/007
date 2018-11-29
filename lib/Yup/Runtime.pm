@@ -3,9 +3,9 @@ use Yup::Q;
 use Yup::Builtins;
 use Yup::Equal;
 
-constant NO_OUTER = Val::Object.new;
+constant NO_OUTER = Yup::Type::Object.new;
 constant RETURN_TO = Q::Identifier.new(
-    :name(Val::Str.new(:value("--RETURN-TO--"))),
+    :name(Yup::Type::Str.new(:value("--RETURN-TO--"))),
     :frame(NIL));
 constant EXIT_SUCCESS = 0;
 
@@ -24,7 +24,7 @@ class Yup::Runtime {
 
     submethod BUILD(:$!input, :$!output, :@!arguments) {
         $!builtin-opscope = opscope();
-        $!builtin-frame = Val::Object.new(:properties(
+        $!builtin-frame = Yup::Type::Object.new(:properties(
             :outer-frame(NO_OUTER),
             :pad(builtins-pad()))
         );
@@ -53,9 +53,9 @@ class Yup::Runtime {
 
     method handle-main() {
         if self.maybe-get-var("MAIN") -> $main {
-            if $main ~~ Val::Sub {
+            if $main ~~ Yup::Type::Sub {
                 self.call($main, @!arguments.map(-> $value {
-                    Val::Str.new(:$value)
+                    Yup::Type::Str.new(:$value)
                 }));
 
                 CATCH {
@@ -78,11 +78,11 @@ class Yup::Runtime {
     }
 
     method enter($outer-frame, $static-lexpad, $statementlist, $routine?) {
-        my $frame = Val::Object.new(:properties(:$outer-frame, :pad(Val::Object.new)));
+        my $frame = Yup::Type::Object.new(:properties(:$outer-frame, :pad(Yup::Type::Object.new)));
         @!frames.push($frame);
         for $static-lexpad.properties.kv -> $name, $value {
             my $identifier = Q::Identifier.new(
-                :name(Val::Str.new(:value($name))),
+                :name(Yup::Type::Str.new(:value($name))),
                 :frame(NIL));
             self.declare-var($identifier, $value);
         }
@@ -93,7 +93,7 @@ class Yup::Runtime {
                 my $statementlist = .block.statementlist;
                 my $static-lexpad = .block.static-lexpad;
                 my $outer-frame = $frame;
-                my $val = Val::Sub.new(
+                my $val = Yup::Type::Sub.new(
                     :$name,
                     :$parameterlist,
                     :$statementlist,
@@ -130,7 +130,7 @@ class Yup::Runtime {
     }
 
     method !maybe-find-pad(Str $symbol, $frame is copy) {
-        if $frame ~~ Val::Nil {    # XXX: make a `defined` method on Nil so we can use `//`
+        if $frame ~~ Yup::Type::Nil {    # XXX: make a `defined` method on Nil so we can use `//`
             $frame = self.current-frame;
         }
         repeat until $frame === NO_OUTER {
@@ -144,7 +144,7 @@ class Yup::Runtime {
 
     method put-var(Q::Identifier $identifier, $value) {
         my $name = $identifier.name.value;
-        my $frame = $identifier.frame ~~ Val::Nil
+        my $frame = $identifier.frame ~~ Yup::Type::Nil
             ?? self.current-frame
             !! $identifier.frame;
         my $pad = self!find-pad($name, $frame);
@@ -164,7 +164,7 @@ class Yup::Runtime {
 
     method declare-var(Q::Identifier $identifier, $value?) {
         my $name = $identifier.name.value;
-        my Val::Object $frame = $identifier.frame ~~ Val::Nil
+        my Yup::Type::Object $frame = $identifier.frame ~~ Yup::Type::Nil
             ?? self.current-frame
             !! $identifier.frame;
         $frame.properties<pad>.properties{$name} = $value // NIL;
@@ -193,7 +193,7 @@ class Yup::Runtime {
         self.leave;
     }
 
-    method call(Val::Sub $c, @arguments) {
+    method call(Yup::Type::Sub $c, @arguments) {
         if $c === $!say-builtin {
             for @arguments -> $argument {
                 $.output.print($argument.Str);
@@ -221,7 +221,7 @@ class Yup::Runtime {
                 $.output.print("\n");
                 return NIL;
             }
-            return Val::Str.new(:$value);
+            return Yup::Type::Str.new(:$value);
         }
         if $c.hook -> &hook {
             return &hook(|@arguments) || NIL;
@@ -248,14 +248,14 @@ class Yup::Runtime {
         sub builtin(&fn) {
             my $name = &fn.name;
             my &ditch-sigil = { $^str.substr(1) };
-            my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Val::Str.new(:$^value))))) };
+            my &parameter = { Q::Parameter.new(:identifier(Q::Identifier.new(:name(Yup::Type::Str.new(:$^value))))) };
             my @elements = &fn.signature.params».name».&ditch-sigil».&parameter;
-            my $parameterlist = Q::ParameterList.new(:parameters(Val::Array.new(:@elements)));
+            my $parameterlist = Q::ParameterList.new(:parameters(Yup::Type::Array.new(:@elements)));
             my $statementlist = Q::StatementList.new();
-            return Val::Sub.new-builtin(&fn, $name, $parameterlist, $statementlist);
+            return Yup::Type::Sub.new-builtin(&fn, $name, $parameterlist, $statementlist);
         }
 
-        my $type = Val::Type.of($obj.WHAT).name;
+        my $type = Yup::Type::Type.of($obj.WHAT).name;
         if $obj ~~ Q {
             if $propname eq "detach" {
                 sub aname($attr) { $attr.name.substr(2) }
@@ -263,10 +263,10 @@ class Yup::Runtime {
 
                 sub interpolate($thing) {
                     return $thing.new(:elements($thing.elements.map(&interpolate)))
-                        if $thing ~~ Val::Array;
+                        if $thing ~~ Yup::Type::Array;
 
                     return $thing.new(:properties(%($thing.properties.map(.key => interpolate(.value)))))
-                        if $thing ~~ Val::Object;
+                        if $thing ~~ Yup::Type::Object;
 
                     return $thing
                         if $thing ~~ Yup::Value;
@@ -301,49 +301,49 @@ class Yup::Runtime {
 
             return $obj."$propname"();
         }
-        elsif $obj ~~ Val::Int && $propname eq "abs" {
+        elsif $obj ~~ Yup::Type::Int && $propname eq "abs" {
             return builtin(sub abs() {
-                return Val::Int.new(:value($obj.value.abs));
+                return Yup::Type::Int.new(:value($obj.value.abs));
             });
         }
-        elsif $obj ~~ Val::Int && $propname eq "chr" {
+        elsif $obj ~~ Yup::Type::Int && $propname eq "chr" {
             return builtin(sub chr() {
-                return Val::Str.new(:value($obj.value.chr));
+                return Yup::Type::Str.new(:value($obj.value.chr));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "ord" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "ord" {
             return builtin(sub ord() {
-                return Val::Int.new(:value($obj.value.ord));
+                return Yup::Type::Int.new(:value($obj.value.ord));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "chars" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "chars" {
             return builtin(sub chars() {
-                return Val::Int.new(:value($obj.value.chars));
+                return Yup::Type::Int.new(:value($obj.value.chars));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "uc" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "uc" {
             return builtin(sub uc() {
-                return Val::Str.new(:value($obj.value.uc));
+                return Yup::Type::Str.new(:value($obj.value.uc));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "lc" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "lc" {
             return builtin(sub lc() {
-                return Val::Str.new(:value($obj.value.lc));
+                return Yup::Type::Str.new(:value($obj.value.lc));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "trim" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "trim" {
             return builtin(sub trim() {
-                return Val::Str.new(:value($obj.value.trim));
+                return Yup::Type::Str.new(:value($obj.value.trim));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "size" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "size" {
             return builtin(sub size() {
-                return Val::Int.new(:value($obj.elements.elems));
+                return Yup::Type::Int.new(:value($obj.elements.elems));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "index" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "index" {
             return builtin(sub index($value) {
-                return Val::Int.new(:value(sub () {
+                return Yup::Type::Int.new(:value(sub () {
                     for ^$obj.elements.elems -> $i {
                         my %*equality-seen;
                         if equal-value($obj.elements[$i], $value) {
@@ -354,158 +354,158 @@ class Yup::Runtime {
                 }()));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "reverse" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "reverse" {
             return builtin(sub reverse() {
-                return Val::Array.new(:elements($obj.elements.reverse));
+                return Yup::Type::Array.new(:elements($obj.elements.reverse));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "sort" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "sort" {
             return builtin(sub sort() {
                 my $types = $obj.elements.map({ .^name }).unique;
                 die X::TypeCheck::HeterogeneousArray.new(:operation<sort>, :$types)
                     if $types.elems > 1;
-                return Val::Array.new(:elements($obj.elements.sort));
+                return Yup::Type::Array.new(:elements($obj.elements.sort));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "shuffle" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "shuffle" {
             return builtin(sub shuffle() {
-                return Val::Array.new(:elements($obj.elements.pick(*)));
+                return Yup::Type::Array.new(:elements($obj.elements.pick(*)));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "concat" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "concat" {
             return builtin(sub concat($array) {
-                die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Val::Array))
-                    unless $array ~~ Val::Array;
-                return Val::Array.new(:elements([|$obj.elements , |$array.elements]));
+                die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Yup::Type::Array))
+                    unless $array ~~ Yup::Type::Array;
+                return Yup::Type::Array.new(:elements([|$obj.elements , |$array.elements]));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "join" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "join" {
             return builtin(sub join($sep) {
-                return Val::Str.new(:value($obj.elements.join($sep.value.Str)));
+                return Yup::Type::Str.new(:value($obj.elements.join($sep.value.Str)));
             });
         }
-        elsif $obj ~~ Val::Object && $propname eq "size" {
+        elsif $obj ~~ Yup::Type::Object && $propname eq "size" {
             return builtin(sub size() {
-                return Val::Int.new(:value($obj.properties.elems));
+                return Yup::Type::Int.new(:value($obj.properties.elems));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "split" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "split" {
             return builtin(sub split($sep) {
-                my @elements = (Val::Str.new(:value($_)) for $obj.value.split($sep.value));
-                return Val::Array.new(:@elements);
+                my @elements = (Yup::Type::Str.new(:value($_)) for $obj.value.split($sep.value));
+                return Yup::Type::Array.new(:@elements);
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "index" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "index" {
             return builtin(sub index($substr) {
-                return Val::Int.new(:value($obj.value.index($substr.value) // -1));
+                return Yup::Type::Int.new(:value($obj.value.index($substr.value) // -1));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "substr" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "substr" {
             return builtin(sub substr($pos, $chars) {
-                return Val::Str.new(:value($obj.value.substr(
+                return Yup::Type::Str.new(:value($obj.value.substr(
                     $pos.value,
                     $chars.value)));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "contains" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "contains" {
             return builtin(sub contains($substr) {
-                die X::TypeCheck.new(:operation<contains>, :got($substr), :expected(Val::Str))
-                    unless $substr ~~ Val::Str;
+                die X::TypeCheck.new(:operation<contains>, :got($substr), :expected(Yup::Type::Str))
+                    unless $substr ~~ Yup::Type::Str;
 
-                return Val::Bool.new(:value(
+                return Yup::Type::Bool.new(:value(
                         $obj.value.contains($substr.value)
                 ));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "prefix" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "prefix" {
             return builtin(sub prefix($pos) {
-                return Val::Str.new(:value($obj.value.substr(
+                return Yup::Type::Str.new(:value($obj.value.substr(
                     0,
                     $pos.value)));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "suffix" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "suffix" {
             return builtin(sub suffix($pos) {
-                return Val::Str.new(:value($obj.value.substr(
+                return Yup::Type::Str.new(:value($obj.value.substr(
                     $pos.value)));
             });
         }
-        elsif $obj ~~ Val::Str && $propname eq "charat" {
+        elsif $obj ~~ Yup::Type::Str && $propname eq "charat" {
             return builtin(sub charat($pos) {
                 my $s = $obj.value;
 
                 die X::Subscript::TooLarge.new(:value($pos.value), :length($s.chars))
                     if $pos.value >= $s.chars;
 
-                return Val::Str.new(:value($s.substr($pos.value, 1)));
+                return Yup::Type::Str.new(:value($s.substr($pos.value, 1)));
             });
         }
-        elsif $obj ~~ Val::Regex && $propname eq "fullmatch" {
+        elsif $obj ~~ Yup::Type::Regex && $propname eq "fullmatch" {
             return builtin(sub fullmatch($str) {
                 die X::Regex::InvalidMatchType.new
-                    unless $str ~~ Val::Str;
+                    unless $str ~~ Yup::Type::Str;
 
-                return Val::Bool.new(:value($obj.fullmatch($str.value)));
+                return Yup::Type::Bool.new(:value($obj.fullmatch($str.value)));
             });
         }
-        elsif $obj ~~ Val::Regex && $propname eq "search" {
+        elsif $obj ~~ Yup::Type::Regex && $propname eq "search" {
             return builtin(sub search($str) {
                 die X::Regex::InvalidMatchType.new
-                    unless $str ~~ Val::Str;
+                    unless $str ~~ Yup::Type::Str;
 
-                return Val::Bool.new(:value($obj.search($str.value)));
+                return Yup::Type::Bool.new(:value($obj.search($str.value)));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "grep" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "grep" {
             return builtin(sub grep($fn) {
                 my @elements = $obj.elements.grep({ self.call($fn, [$_]).truthy });
-                return Val::Array.new(:@elements);
+                return Yup::Type::Array.new(:@elements);
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "map" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "map" {
             return builtin(sub map($fn) {
                 my @elements = $obj.elements.map({ self.call($fn, [$_]) });
-                return Val::Array.new(:@elements);
+                return Yup::Type::Array.new(:@elements);
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "push" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "push" {
             return builtin(sub push($newelem) {
                 $obj.elements.push($newelem);
                 return NIL;
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "pop" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "pop" {
             return builtin(sub pop() {
                 die X::Cannot::Empty.new(:action<pop>, :what($obj.^name))
                     if $obj.elements.elems == 0;
                 return $obj.elements.pop();
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "shift" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "shift" {
             return builtin(sub shift() {
                 die X::Cannot::Empty.new(:action<pop>, :what($obj.^name))
                     if $obj.elements.elems == 0;
                 return $obj.elements.shift();
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "unshift" {
+        elsif $obj ~~ Yup::Type::Array && $propname eq "unshift" {
             return builtin(sub unshift($newelem) {
                 $obj.elements.unshift($newelem);
                 return NIL;
             });
         }
-        elsif $obj ~~ Val::Type && $propname eq "name" {
-            return Val::Str.new(:value($obj.name));
+        elsif $obj ~~ Yup::Type::Type && $propname eq "name" {
+            return Yup::Type::Str.new(:value($obj.name));
         }
-        elsif $obj ~~ Val::Type && $propname eq "create" {
+        elsif $obj ~~ Yup::Type::Type && $propname eq "create" {
             return builtin(sub create($properties) {
                 $obj.create($properties.elements.map({ .elements[0].value => .elements[1] }));
             });
         }
-        elsif $obj ~~ Val::Sub && $propname eq any <outer-frame static-lexpad parameterlist statementlist> {
+        elsif $obj ~~ Yup::Type::Sub && $propname eq any <outer-frame static-lexpad parameterlist statementlist> {
             return $obj."$propname"();
         }
-        elsif $obj ~~ (Q | Val::Object) && ($obj.properties{$propname} :exists) {
+        elsif $obj ~~ (Q | Yup::Type::Object) && ($obj.properties{$propname} :exists) {
             return $obj.properties{$propname};
         }
         elsif $propname eq "get" {
@@ -515,8 +515,8 @@ class Yup::Runtime {
         }
         elsif $propname eq "keys" {
             return builtin(sub keys() {
-                return Val::Array.new(:elements($obj.properties.keys.map({
-                    Val::Str.new(:$^value)
+                return Yup::Type::Array.new(:elements($obj.properties.keys.map({
+                    Yup::Type::Str.new(:$^value)
                 })));
             });
         }
@@ -527,7 +527,7 @@ class Yup::Runtime {
                 #      substrate, and the special-cased properties
                 #      <get has extend update id>
                 my $value = $obj.properties{$prop.value} :exists;
-                return Val::Bool.new(:$value);
+                return Yup::Type::Bool.new(:$value);
             });
         }
         elsif $propname eq "update" {
@@ -548,126 +548,126 @@ class Yup::Runtime {
         }
         elsif $propname eq "id" {
             # XXX: Make this work for Q-type objects, too.
-            return Val::Int.new(:value($obj.id));
+            return Yup::Type::Int.new(:value($obj.id));
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "size" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "size" {
             return builtin(sub size() {
-                return Val::Int.new(:value($obj.elements.elems));
+                return Yup::Type::Int.new(:value($obj.elements.elems));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "reverse" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "reverse" {
             return builtin(sub reverse() {
-                return Val::Tuple.new(:elements($obj.elements.reverse));
+                return Yup::Type::Tuple.new(:elements($obj.elements.reverse));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "sort" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "sort" {
             return builtin(sub sort() {
                 my $types = $obj.elements.map({ .^name }).unique;
                 die X::TypeCheck::HeterogeneousArray.new(:operation<sort>, :$types)
                     if $types.elems > 1;
-                return Val::Tuple.new(:elements($obj.elements.sort));
+                return Yup::Type::Tuple.new(:elements($obj.elements.sort));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "shuffle" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "shuffle" {
             return builtin(sub shuffle() {
-                return Val::Tuple.new(:elements($obj.elements.pick(*)));
+                return Yup::Type::Tuple.new(:elements($obj.elements.pick(*)));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "concat" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "concat" {
             return builtin(sub concat($array) {
-                die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Val::Tuple))
-                    unless $array ~~ Val::Tuple;
-                return Val::Tuple.new(:elements([|$obj.elements , |$array.elements]));
+                die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Yup::Type::Tuple))
+                    unless $array ~~ Yup::Type::Tuple;
+                return Yup::Type::Tuple.new(:elements([|$obj.elements , |$array.elements]));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "join" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "join" {
             return builtin(sub join($sep) {
-                return Val::Str.new(:value($obj.elements.join($sep.value.Str)));
+                return Yup::Type::Str.new(:value($obj.elements.join($sep.value.Str)));
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "grep" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "grep" {
             return builtin(sub grep($fn) {
                 my @elements = $obj.elements.grep({ self.call($fn, [$_]).truthy });
-                return Val::Tuple.new(:@elements);
+                return Yup::Type::Tuple.new(:@elements);
             });
         }
-        elsif $obj ~~ Val::Tuple && $propname eq "map" {
+        elsif $obj ~~ Yup::Type::Tuple && $propname eq "map" {
             return builtin(sub map($fn) {
                 my @elements = $obj.elements.map({ self.call($fn, [$_]) });
-                return Val::Tuple.new(:@elements);
+                return Yup::Type::Tuple.new(:@elements);
             });
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "ArgumentList" {
-            return Val::Type.of(Q::ArgumentList);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "ArgumentList" {
+            return Yup::Type::Type.of(Q::ArgumentList);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Block" {
-            return Val::Type.of(Q::Block);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Block" {
+            return Yup::Type::Type.of(Q::Block);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "CompUnit" {
-            return Val::Type.of(Q::CompUnit);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "CompUnit" {
+            return Yup::Type::Type.of(Q::CompUnit);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Identifier" {
-            return Val::Type.of(Q::Identifier);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Identifier" {
+            return Yup::Type::Type.of(Q::Identifier);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Infix" {
-            return Val::Type.of(Q::Infix);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Infix" {
+            return Yup::Type::Type.of(Q::Infix);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Literal" {
-            return Val::Type.of(Q::Literal);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Literal" {
+            return Yup::Type::Type.of(Q::Literal);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "ParameterList" {
-            return Val::Type.of(Q::ParameterList);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "ParameterList" {
+            return Yup::Type::Type.of(Q::ParameterList);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Postfix" {
-            return Val::Type.of(Q::Postfix);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Postfix" {
+            return Yup::Type::Type.of(Q::Postfix);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Prefix" {
-            return Val::Type.of(Q::Prefix);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Prefix" {
+            return Yup::Type::Type.of(Q::Prefix);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Statement" {
-            return Val::Type.of(Q::Statement);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Statement" {
+            return Yup::Type::Type.of(Q::Statement);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "StatementList" {
-            return Val::Type.of(Q::StatementList);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "StatementList" {
+            return Yup::Type::Type.of(Q::StatementList);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q && $propname eq "Term" {
-            return Val::Type.of(Q::Term);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q && $propname eq "Term" {
+            return Yup::Type::Type.of(Q::Term);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Int" {
-            return Val::Type.of(Q::Literal::Int);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Literal && $propname eq "Int" {
+            return Yup::Type::Type.of(Q::Literal::Int);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Nil" {
-            return Val::Type.of(Q::Literal::Nil);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Literal && $propname eq "Nil" {
+            return Yup::Type::Type.of(Q::Literal::Nil);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Literal && $propname eq "Str" {
-            return Val::Type.of(Q::Literal::Str);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Literal && $propname eq "Str" {
+            return Yup::Type::Type.of(Q::Literal::Str);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Postfix && $propname eq "Call" {
-            return Val::Type.of(Q::Postfix::Call);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Postfix && $propname eq "Call" {
+            return Yup::Type::Type.of(Q::Postfix::Call);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Postfix && $propname eq "Property" {
-            return Val::Type.of(Q::Postfix::Property);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Postfix && $propname eq "Property" {
+            return Yup::Type::Type.of(Q::Postfix::Property);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "Sub" {
-            return Val::Type.of(Q::Statement::Sub);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Statement && $propname eq "Sub" {
+            return Yup::Type::Type.of(Q::Statement::Sub);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "If" {
-            return Val::Type.of(Q::Statement::If);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Statement && $propname eq "If" {
+            return Yup::Type::Type.of(Q::Statement::If);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "Macro" {
-            return Val::Type.of(Q::Statement::Macro);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Statement && $propname eq "Macro" {
+            return Yup::Type::Type.of(Q::Statement::Macro);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "My" {
-            return Val::Type.of(Q::Statement::My);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Statement && $propname eq "My" {
+            return Yup::Type::Type.of(Q::Statement::My);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Statement && $propname eq "Return" {
-            return Val::Type.of(Q::Statement::Return);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Statement && $propname eq "Return" {
+            return Yup::Type::Type.of(Q::Statement::Return);
         }
-        elsif $obj ~~ Val::Type && $obj.type === Q::Term && $propname eq "Array" {
-            return Val::Type.of(Q::Term::Array);
+        elsif $obj ~~ Yup::Type::Type && $obj.type === Q::Term && $propname eq "Array" {
+            return Yup::Type::Type.of(Q::Term::Array);
         }
         else {
-            if $obj ~~ Val::Type {
+            if $obj ~~ Yup::Type::Type {
                 die X::Property::NotFound.new(:$propname, :type("$type ({$obj.type.^name})"));
             }
             die X::Property::NotFound.new(:$propname, :$type);
@@ -678,8 +678,8 @@ class Yup::Runtime {
         if $obj ~~ Q {
             die "We don't handle assigning to Q object properties yet";
         }
-        elsif $obj !~~ Val::Object {
-            die "We don't handle assigning to non-Val::Object types yet";
+        elsif $obj !~~ Yup::Type::Object {
+            die "We don't handle assigning to non-Yup::Type::Object types yet";
         }
         else {
             $obj.properties{$propname} = $newvalue;

@@ -5,7 +5,7 @@ my %documented;
 
 for «'doc/val.md' 'doc/q.md'» -> $file {
     for $file.IO.lines -> $line {
-        my $prefix = $file eq 'doc/val.md' ?? 'Val::' !! '';  # XXX
+        my $prefix = $file eq 'doc/val.md' ?? 'Yup::Type::' !! '';  # XXX
         if $line ~~ /^ \h* '### ' (.+) / {  # a heading
             %documented{$prefix ~ $0} = True;
         }
@@ -18,7 +18,7 @@ for <lib/Yup/Val.pm lib/Yup/Q.pm> -> $file {
     # my $state = Normal;
 
     for $file.IO.lines -> $line {
-        if $line ~~ /^ < class role > \h+ (Q | < Val:: Q:: > \S+)/ {
+        if $line ~~ /^ < class role > \h+ (Q | < Yup::Type:: Q:: > \S+)/ {
             ok %documented{$0}, "$0 is documented";
             # ok $state == ApiComment, "$0 is documented";
         }
