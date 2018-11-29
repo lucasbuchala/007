@@ -116,16 +116,16 @@ sub has-exit-code($program, $expected-exit-code, $desc = "MISSING TEST DESCRIPTI
     is $runtime.exit-code, $expected-exit-code, $desc;
 }
 
-sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
+sub emits-p5($program, @expected-builtins, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
     my $output = UnwantedOutput.new;
     my $runtime = Yup.runtime(:$output);
     my $parser = Yup.parser(:$runtime);
     my $ast = $parser.parse($program);
-    my $emitted-js = Yup::Backend::Perl5.new.emit($ast);
-    my $actual = $emitted-js ~~ /^^ '(() => { // main program' \n ([<!before '})();'> \N+ [\n|$$]]*)/
-        ?? (~$0).indent(*)
-        !! $emitted-js;
-    my @actual-builtins = $emitted-js.comb(/^^ "function " <(<-[(]>+)>/);
+    my $emitted-p5 = Yup::Backend::Perl5.new.emit($ast);
+    my $actual = $emitted-p5 ~~ /^^ "###CODE###\n" (.*) ^^ '__END__' $$ /
+        ?? (~$0)
+        !! $emitted-p5;
+    my @actual-builtins = $emitted-p5.comb(/^^ 'sub' \s+ (\w+)/);
 
     empty-diff @expected-builtins.sort.join("\n"), @actual-builtins.sort.join("\n"), "$desc (builtins)";
     empty-diff $expected, $actual, $desc;

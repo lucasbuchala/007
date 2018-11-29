@@ -1,13 +1,10 @@
 use Yup::Val;
 use Yup::Q;
 
-my %builtins =
-    "say" => q:to '----',
-        function say(arg) {
-            console.log(arg);
-        }
-        ----
-;
+my %builtins = (
+    answer => 'sub answer { 42 }',
+    what   => 'sub what { print my $s = "This is Yup\n"; $s }',
+);
 
 class Yup::Backend::Perl5 {
     method emit(Q::CompUnit $compunit) {
@@ -23,11 +20,7 @@ class Yup::Backend::Perl5 {
 
         my $builtins = @builtins.map({ "$_\n" }).join;
         my $main = @main.join("\n");
-        return qq:to 'PROGRAM';
-            {$builtins}(() => \{ // main program
-            {$main.indent(4)}
-            \})();
-            PROGRAM
+        return "#!/usr/bin/env perl\nuse v5.28;\n$builtins\n###CODE###\n$main\n__END__\n";
 
         multi emit-stmt(Q::Statement $stmt) {
             die "Cannot handle {$stmt.^name}";
@@ -39,7 +32,7 @@ class Yup::Backend::Perl5 {
                 && $expr.operand ~~ Q::Identifier
                 && $expr.operand.name.value eq "say" {
 
-                @builtins.push(%builtins<say>);
+                # @builtins.push(%builtins<say>);
                 my @arguments = $expr.argumentlist.arguments.elements.map: {
                     die "Cannot handle non-literal-Str arguments just yet!"
                         unless $_ ~~ Q::Literal::Str;
@@ -50,7 +43,7 @@ class Yup::Backend::Perl5 {
 
             when $expr ~~ Q::Term::My {
                 my $name = $expr.identifier.name.value;
-                @main.push("let {$name};");
+                @main.push("my \${$name};");
             }
 
             when $expr ~~ Q::Infix::Assignment
@@ -63,7 +56,7 @@ class Yup::Backend::Perl5 {
                 die "Cannot handle non-literal-Int rhs just yet!"
                         unless $rhs ~~ Q::Literal::Int;
                 my $int = $rhs.value.Str;
-                @main.push("let {$name} = {$int};");
+                @main.push("my \${$name} = {$int};");
             }
 
             die "Cannot handle this type of Q::Statement::Expr yet!";
