@@ -2,8 +2,8 @@
   "name"        : "Yup",
   "perl"        : "6.d",
   "version"     : "0.0.1",
-  "authors"     : [ "Lucas Buchala" ],
-  "description" : "A small experimental language",
+  "authors"     : [ "github:masak", "Lucas Buchala" ],
+  "description" : "Yet another experimental language (Based on 007)",
   "license"     : "Artistic-2.0",
   "depends" : [],
   "provides" : {
